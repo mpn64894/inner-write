@@ -1,0 +1,41 @@
+.navBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background-color: #333;
+    color: white;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.companyName {
+    margin-left: 8px;
+    font-weight: bold;
+}
+
+.navLinks a {
+    margin: 0 10px;
+    color: white;
+    text-decoration: none;
+}
+
+.authButton button {
+    padding: 8px 12px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.authButton .logoutBtn {
+    background-color: #FF4136;
+}
+
+.authButton button:hover {
+    opacity: 0.9;
+}
