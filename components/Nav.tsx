@@ -9,14 +9,16 @@ export const Nav = () => {
 
     // Handlers for login and logout
     const handleLogin = () => {
-        setIsAuthenticated(true);
         // Perform login actions here (e.g., redirect, fetch user data)
     };
 
     const handleLogout = () => {
-        setIsAuthenticated(false);
         // Perform logout actions here (e.g., clear user session)
     };
+
+    const handleSignUp = () => {
+
+    }
 
     return (
         <nav className={styles.navBar}>
@@ -29,12 +31,17 @@ export const Nav = () => {
             <div className={styles.companyName}>
                 <h1>InnerwRite</h1>
             </div>
-
+            
             <div className={styles.authButton}>
-                {isAuthenticated ? (
-                    <button onClick={handleLogout} className={styles.logoutBtn}>Logout</button>
+                {!isAuthenticated ? (
+                    <div>
+                        <button onClick={handleSignUp} className={styles.signUpBtn}>Sign Up</button>
+                        <button onClick={handleLogin} className={styles.loginBtn}>Login</button>
+                    </div>
                 ) : (
-                    <button onClick={handleLogin} className={styles.loginBtn}>Login</button>
+                    <div>
+                        <button onClick={handleLogout} className={styles.logoutBtn}>Logout</button>
+                    </div>
                 )}
             </div>
         </nav>
