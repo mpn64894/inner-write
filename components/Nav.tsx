@@ -1,30 +1,54 @@
-"use client";
+"use client"; 
 import styles from "./Nav.module.css";
-import { useState } from "react";
 import { CiCalendar } from 'react-icons/ci';
+import { useRouter } from 'next/navigation';
 
-export const Nav = () => {
-    // Simulate authentication state
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+interface NavProps {
+    isSignUpPage?: boolean; 
+    isLoginPage?: boolean; 
+    isAuthenticatedPage?: boolean; 
+}
 
-    // Handlers for login and logout
+function Nav(props: NavProps) {
+    const router = useRouter();
+    console.log(props)
     const handleLogin = () => {
-        // Perform login actions here (e.g., redirect, fetch user data)
+       router.push('/login')
     };
 
     const handleLogout = () => {
-        // Perform logout actions here (e.g., clear user session)
+        //
     };
 
     const handleSignUp = () => {
+        router.push('/signup');
+    };
 
+    let buttons;
+
+    if (!props.isAuthenticatedPage) {
+        if (props.isSignUpPage) {
+            buttons = (
+                <button onClick={handleLogin} className={styles.loginBtn}>Login</button>
+            );
+        } else {
+            buttons = (
+                <>
+                    <button onClick={handleSignUp} className={styles.signUpBtn}>Sign Up</button>
+                </>
+            );
+        }
+    } else {
+        buttons = (
+            <button onClick={handleLogout} className={styles.logoutBtn}>Logout</button>
+        );
     }
 
     return (
         <nav className={styles.navBar}>
             <div className={styles.logo}>
                 <span className={styles.logo}>
-                        <CiCalendar />
+                    <CiCalendar size={40} />
                 </span>
             </div>
 
@@ -33,19 +57,10 @@ export const Nav = () => {
             </div>
             
             <div className={styles.authButton}>
-                {!isAuthenticated ? (
-                    <div>
-                        <button onClick={handleSignUp} className={styles.signUpBtn}>Sign Up</button>
-                        <button onClick={handleLogin} className={styles.loginBtn}>Login</button>
-                    </div>
-                ) : (
-                    <div>
-                        <button onClick={handleLogout} className={styles.logoutBtn}>Logout</button>
-                    </div>
-                )}
+                {buttons}
             </div>
         </nav>
     );
-}
+};
 
 export default Nav;

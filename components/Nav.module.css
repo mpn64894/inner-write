@@ -2,9 +2,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px;
+    padding: 6px 16px;
     background-color: #ffffff;
     color: white;
+    flex: 0 0 auto;
+    gap: 500px;
 }
 
 .logo {
@@ -13,20 +15,10 @@
     color: black;
 }
 
-.logo CiCalendar{
-    size: 20px;
-}
-
 .companyName {
-    margin-left: 8px;
+    /*margin-left: 8px;*/
     font-weight: bold;
     color: black;
-}
-
-.navLinks a {
-    margin: 0 10px;
-    color: white;
-    text-decoration: none;
 }
 
 .authButton button {
