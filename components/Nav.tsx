@@ -2,6 +2,7 @@
 import styles from "./Nav.module.css";
 import { CiCalendar } from 'react-icons/ci';
 import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
 
 interface NavProps {
     isSignUpPage?: boolean; 
@@ -12,30 +13,50 @@ interface NavProps {
 function Nav(props: NavProps) {
     const router = useRouter();
     console.log(props)
+
+    // handles login
     const handleLogin = () => {
        router.push('/login')
     };
 
+
+    // handles logout
     const handleLogout = () => {
         //
     };
 
+    // handles signup
     const handleSignUp = () => {
         router.push('/signup');
     };
+
+    // Handle going back to home when click on company name
+    const handleHomeClick = () => {
+        router.push('/'); // Change this to your home route if different
+    };
+
 
     let buttons;
 
     if (!props.isAuthenticatedPage) {
         if (props.isSignUpPage) {
             buttons = (
-                <button onClick={handleLogin} className={styles.loginBtn}>Login</button>
+                <>
+                    <button onClick={handleLogin} className={styles.loginBtn}>Login</button>
+                </>
             );
-        } else {
+        } else if (props.isLoginPage){
             buttons = (
                 <>
                     <button onClick={handleSignUp} className={styles.signUpBtn}>Sign Up</button>
                 </>
+            );
+        } else {
+        buttons = (
+            <>
+                <button onClick={handleSignUp} className={styles.signUpBtn}>Sign Up</button>
+                <button onClick={handleLogin} className={styles.loginBtn}>Login</button>
+            </>
             );
         }
     } else {
@@ -53,7 +74,9 @@ function Nav(props: NavProps) {
             </div>
 
             <div className={styles.companyName}>
-                <h1>InnerwRite</h1>
+                <button onClick={handleHomeClick} className={styles.companyButton}>
+                        <h1>InnerwRite</h1>
+                </button>
             </div>
             
             <div className={styles.authButton}>
