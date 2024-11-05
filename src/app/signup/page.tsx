@@ -1,4 +1,6 @@
 import Nav from "../../../components/Nav"
+//import Router from "next/router";
+
 
 export default function SignUpPage() {
     return (
