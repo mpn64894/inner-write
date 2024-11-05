@@ -7,9 +7,9 @@ import { useState } from "react";
 
 export default function Home() {
   const [token, setToken] = useState();
-  if(!token) {
-    return <HomePage/>
-  }
+  console.log(token)
+  return <HomePage/>
+  
   return (
     
     <div>
