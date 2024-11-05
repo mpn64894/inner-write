@@ -1,40 +1,66 @@
-"use client";
-import { FormEvent } from "react";
-import Nav from "../../../components/Nav"
-import { useRouter } from "next/navigation";
+'use client'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Nav from '../../../components/Nav'
 
+function LoginPage() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const router = useRouter()
 
-export default function LoginPage() {
-    const router = useRouter()
-   
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-      e.preventDefault()
-   
-      const formData = new FormData(e.currentTarget)
-      const email = formData.get('email')
-      const password = formData.get('password')
-   
-      const response = await fetch('/login', {
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault() // Prevent default form submission
+
+    try {
+      const response = await fetch('/api/login', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
       })
-   
-      if (response.ok) {
-        router.push('/authenticated/home')
-      } else {
-        // Handle errors
-      }
+
+      if (!response.ok) throw new Error('Login failed')
+
+      const { token } = await response.json()
+      document.cookie = `token=${token}; path=/`
+      router.push('/authenticated/home')
+    } catch (error) {
+      console.error(error)
     }
-   
-    return (
-        <div>
-          <Nav isLoginPage={true}/>
-          <form onSubmit={handleSubmit}>
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Password" required />
-            <button type="submit">Login</button>
-          </form>
-        </div>
-      );
   }
+
+  return (
+    <div>
+      <Nav isLoginPage={true}/>
+      <form onSubmit={handleLogin}>
+        <label>
+          Email:
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Password:
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </label>
+        <br />
+        <button type="submit">Log In</button>
+      </form>
+    </div>
+  )
+}
+
+export default LoginPage
