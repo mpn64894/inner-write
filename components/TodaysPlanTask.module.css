@@ -1,0 +1,16 @@
+.task {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .checkbox {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .completed {
+    text-decoration: line-through;
+    color: #888;
+  }
+  

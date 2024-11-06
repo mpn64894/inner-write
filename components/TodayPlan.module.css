@@ -1,0 +1,24 @@
+.todayPlan 
+{
+    max-width: fit-content;
+    padding: 5px;
+}
+
+.topPart
+{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.leftSide 
+{
+    display: flex;
+    align-items: center;
+    gap: 5px
+}
+
+.switchButton:hover
+{
+    cursor: pointer;
+}
