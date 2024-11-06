@@ -28,7 +28,7 @@ function AuthHomePage() {
         if (!res.ok) throw new Error('Token validation failed')
       } catch (error) {
         console.error(error)
-        router.replace('/') // Redirect to login if token validation fails
+        router.replace('/login') // Redirect to login if token validation fails
       }
     }
 
