@@ -12,7 +12,6 @@ interface NavProps {
 
 function Nav(props: NavProps) {
     const router = useRouter();
-    console.log(props)
 
     // handles login
     const handleLogin = () => {

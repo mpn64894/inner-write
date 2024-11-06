@@ -3,6 +3,7 @@ import Cookies from 'js-cookie'
 import jwt from 'jsonwebtoken'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Nav from '../../../../components/Nav'
 
 function AuthHomePage() {
   const router = useRouter()
@@ -11,14 +12,14 @@ function AuthHomePage() {
     const token = Cookies.get('token')
 
     if (!token) {
-      router.replace('/') // If no token is found, redirect to login page
+      router.replace('/') // If no token is found, redirect to home page
       return
     }
 
     // Validate the token by making an API call
     const validateToken = async () => {
       try {
-        const res = await fetch('/api/login', {
+        const res = await fetch('/api/validate', {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -34,7 +35,12 @@ function AuthHomePage() {
     validateToken()
   }, [router])
 
-  return <div>Protected Content</div>
+  return (
+    <div>
+        <Nav isAuthenticatedPage={true}/>
+        AUTHENTICATED WEB CONTENT
+    </div>
+    )
 }
 
 export default AuthHomePage

@@ -26,7 +26,9 @@ function LoginPage() {
       if (!response.ok) throw new Error('Login failed')
 
       const { token } = await response.json()
-      document.cookie = `token=${token}; path=/`
+      if (token) {
+        document.cookie = `token=${token}; path=/`
+      }
       router.push('/authenticated/home')
     } catch (error) {
       console.error(error)
