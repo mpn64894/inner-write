@@ -12,6 +12,7 @@ export default function HomePage() {
         <div>
             <Nav/>
             <h1>{formattedDate}</h1>
+            
             <TodayPlan/>
             <JournalEntry />
         </div>
