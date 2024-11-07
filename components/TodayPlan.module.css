@@ -85,6 +85,3 @@
     scrollbar-width:thin;
 }
 
-.timeline::-webkit-scrollbar {
-    display: none;
-}
