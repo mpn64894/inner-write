@@ -1,9 +1,10 @@
+/* src/components/TimeSlot.module.css */
+
 .timeSlot {
     display: flex;
     align-items: center;
     padding: 8px 0;
     border-bottom: 1px solid #e0e0e0;
-    cursor: pointer;
   }
   
   .time {
@@ -12,8 +13,9 @@
     color: #666;
   }
   
-  .placeholder {
-    color: #aaa;
-    font-style: italic;
+  .addIcon {
+    cursor: pointer;
+    color: #4caf50; /* Green color for add icon */
+    margin-left: 8px;
   }
   

@@ -5,6 +5,8 @@ import { GoArrowSwitch } from 'react-icons/go';
 import { useState } from "react";
 import TimeSlot from "./TimeSlot";
 
+
+
 const hours = [
   "12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM",
   "8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM",
@@ -14,7 +16,7 @@ const hours = [
 function TodayPlan() {
   const [view, setView] = useState(true); // toggle between views
   const [tasks, setTasks] = useState<{ [key: string]: string }>({});
-  const [showInput, setShowInput] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
   const [selectedHour, setSelectedHour] = useState("");
   const [newTask, setNewTask] = useState("");
 
@@ -22,23 +24,19 @@ function TodayPlan() {
     setView(!view);
   };
 
-  const handleAddClick = () => {
-    setShowInput(true); // Show the input field
-  };
-
-  const handleHourSelect = (hour: string) => {
-    setSelectedHour(hour); // Select the hour to add the task for
-    setShowInput(true);
+  const handleAddIconClick = () => {
+    setShowPopup(true); // Open the popup to add a task
   };
 
   const handleAddTask = () => {
-    if (selectedHour && newTask.trim() !== "") {
+    if (newTask.trim() !== "" && selectedHour) {
       setTasks((prevTasks) => ({
         ...prevTasks,
         [selectedHour]: newTask
       }));
       setNewTask("");
-      setShowInput(false);
+      setSelectedHour("");
+      setShowPopup(false);
     }
   };
 
@@ -50,34 +48,53 @@ function TodayPlan() {
           <div className={styles.logo}>
             <FaHeart size={20} />
           </div>
-          <div className={styles.logo} onClick={handleAddClick}>
-            <IoIosAddCircle size={20} />
+          {/* Clickable icon to add task */}
+          <div className={styles.addLogo}>
+            <IoIosAddCircle size={20} onClick={handleAddIconClick} />
           </div>
         </div>
         <div onClick={toggleView} className={styles.switchButton}>
           <GoArrowSwitch size={20} />
         </div>
       </div>
+
       <div className={styles.timeline}>
         {hours.map((hour, index) => (
           <TimeSlot
             key={index}
             time={hour}
             task={tasks[hour]}
-            onHourClick={() => handleHourSelect(hour)}
           />
         ))}
       </div>
-      {showInput && (
-        <div className={styles.taskInputModal}>
-          <h2>Add Task for {selectedHour}</h2>
+
+      {/* Popup for adding a task */}
+      {showPopup && (
+        <div className={styles.popup}>
+          <h2>Add Task</h2>
+          <label>Select Hour:</label>
+          <select
+            value={selectedHour}
+            onChange={(e) => setSelectedHour(e.target.value)}
+          >
+            <option value="">Select an hour</option>
+            {hours.map((hour) => (
+              <option key={hour} value={hour}>
+                {hour}
+              </option>
+            ))}
+          </select>
+
+          <label>Task Description:</label>
           <input
             type="text"
             value={newTask}
             onChange={(e) => setNewTask(e.target.value)}
             placeholder="Enter task description"
           />
+
           <button onClick={handleAddTask}>Add Task</button>
+          <button onClick={() => setShowPopup(false)}>Cancel</button>
         </div>
       )}
     </div>

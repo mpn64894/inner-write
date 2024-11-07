@@ -2,11 +2,13 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    text-overflow: ellipsis;
   }
   
   .checkbox {
     width: 16px;
     height: 16px;
+    cursor: pointer;
   }
   
   .completed {
