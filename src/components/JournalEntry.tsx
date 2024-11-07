@@ -5,6 +5,7 @@ import styles from './JournalEntry.module.css';
 interface JournalEntryType {
     id: number;
     content: string;
+    prompt: string;
     moodString: string;
   }
   const MOODS = [
@@ -34,6 +35,7 @@ interface JournalEntryType {
             const newEntry : JournalEntryType = {
                 id: Date.now(),
                 content,
+                prompt,
                 moodString,
                 
             };
@@ -90,7 +92,13 @@ interface JournalEntryType {
                     
                     
                 </div>
-                <button type="submit" onClick={handleAddEntry} className={styles.journalButton}>Add Entry</button>   
+                
+                <button 
+                type="submit" 
+                onClick={handleAddEntry} 
+                className={styles.journalButton}>Add Entry
+                {/* disabled={token} */}
+                </button>   
             </div>
         );
     };
