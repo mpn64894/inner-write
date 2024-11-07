@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import Nav from '../../../components/Nav'
+import Nav from '../../components/Nav'
 
 function LoginPage() {
   const [email, setEmail] = useState('')

@@ -1,0 +1,95 @@
+.journalContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    padding: 15px;
+    border: 3px solid #eae4e9;
+    background: #bee1e6;
+    margin: 10px auto;
+    margin-bottom: 15px;
+    width: 98%;
+
+}
+
+.entryWrapper {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    gap: 1rem; 
+    width: 100%;
+    margin: 10px;
+   
+}
+
+.formContainer {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.moodWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; 
+    width: 100%;
+    margin-left: 1rem;
+}
+
+.moodGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 10px;
+    
+    width: 285px;
+    height: 285px; 
+}
+.mood {
+    width: 95%; 
+    height: 80%; 
+    object-fit: cover;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: transform 0.2s;
+}
+
+.mood:hover {
+    transform: scale(1.1);
+}
+
+.selectedMood {
+    border: 3px solid rgb(150, 201, 159);
+}
+
+.journalInput, .promptInput {
+    flex-grow: 1;
+    width: 100%; 
+    height: 200px; 
+    border-radius: 8px;
+    border: 1px solid #ccc; 
+    resize: horizontal; 
+    box-sizing: border-box; 
+}
+.textareaWrapper {
+    margin-bottom: 1rem;
+    width: 100%
+}
+
+.journalButton {
+    margin-top: 1rem;
+    margin: auto;
+    width: 250px;
+    background-color: #3498db; 
+    color: white; 
+    font-size: 16px;
+    padding: 10px 20px; 
+    border: 2px solid transparent; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    font-weight: bold; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+.journalButton:hover {
+    background-color: #2a78b4; 
+    transform: scale(1.05); 
+    border-color: #1f5a8e; 
+}

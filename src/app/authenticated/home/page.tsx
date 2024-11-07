@@ -3,7 +3,7 @@ import Cookies from 'js-cookie'
 import jwt from 'jsonwebtoken'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import Nav from '../../../../components/Nav'
+import Nav from '../../../components/Nav'
 
 function AuthHomePage() {
   const router = useRouter()
