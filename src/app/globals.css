@@ -1,10 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #bdd9cd;
+  --foreground: #051827;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -14,8 +16,28 @@
   }
 } */
 
+/*
+#bdd9cd  light green
+#8eaebb  light blue
+#386994   blue
+#214457   dark blue
+#051827   navy blue
+*/
+
+
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Quicksand', Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 15px;
 }
+
+h1 {
+  font-size: 25px;
+  font-weight: 20px;
+}
+
+
