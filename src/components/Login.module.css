@@ -1,0 +1,96 @@
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+  
+.header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    align-items: center;
+}
+  
+.header h1 {
+    font-family: 'Cursive', sans-serif;
+    font-size: 24px;
+    color: #000;
+    margin-left: 10px;
+}
+  
+.loginContainer {
+    width: 350px;
+    padding: 2rem;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.loginLink {
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+}
+  
+.title {
+    font-size: 32px;
+    color: #000;
+    margin-bottom: 1rem;
+}
+  
+.formLabel {
+    display: block;
+    font-size: 0.9rem;
+    color: #555;
+    text-align: left;
+    margin-top: 1rem;
+}
+  
+.formInput {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+  
+.formInput:focus {
+    border-color: #888;
+    outline: none;
+}
+  
+.registerText {
+    margin: 1rem 0;
+    font-size: 0.9rem;
+}
+  
+.registerLink {
+    color: #000;
+    text-decoration: none;
+    font-weight: bold;
+}
+  
+.registerLink:hover {
+    text-decoration: underline;
+}
+  
+.loginButton {
+    width: 100%;
+    padding: 10px;
+    background-color: #333;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+}
+  
+.loginButton:hover {
+    background-color: #555;
+}
+  
