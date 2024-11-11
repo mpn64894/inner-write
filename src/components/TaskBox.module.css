@@ -59,6 +59,10 @@
   text-overflow: ellipsis;
 }
 
+.taskItem:hover {
+  transform: scale(1.1);
+}
+
 .taskItem h3 {
   margin: 0;
   font-size: 1.1em;

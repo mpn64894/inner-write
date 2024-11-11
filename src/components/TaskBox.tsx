@@ -47,9 +47,9 @@ const TaskBox = () => {
       const task = {
         id: Date.now(),
         title: newTask,
-        date: formattedDate,
-        start: formattedStartTime,
-        end: formattedEndTime,
+        date: taskDate,
+        start: startTime,
+        end: endTime,
         color: selectedColor,
         daysLeft: calculateDaysLeft(taskDate),
       };
@@ -102,7 +102,7 @@ const TaskBox = () => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === selectedTask.id
-          ? { ...task, title: newTask, date: formattedDate, start: formattedStartTime, end: formattedEndTime, color: selectedColor }
+          ? { ...task, title: newTask, date: taskDate, start: startTime, end: endTime, color: selectedColor }
           : task
       )
     );
@@ -315,8 +315,8 @@ const TaskBox = () => {
           </div>
           
           <div className={styles.buttonContainer}>
-            <button className={styles.saveButton} onClick={saveEditedTask}>Save</button>
             <button className={styles.deleteButton} onClick={deleteTask}>Delete</button>
+            <button className={styles.saveButton} onClick={saveEditedTask}>Save</button>
           </div>
         </div>
       )}
