@@ -28,7 +28,7 @@ const TaskBox = () => {
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null); // type selectedTask
 
   const addTask = () => {
-    if (newTask.trim() && taskDate && startTime) {
+    if (newTask.trim() && taskDate && startTime && imageURL.trim()) {
       if (!isDateTimeValid() || !isEndTimeAfterStartTime()) return;
 
       const task = {
@@ -53,7 +53,12 @@ const TaskBox = () => {
       setTaskDate("");
       setStartTime("");
       setEndTime("");
+      setImageURL("");
       setShowPopup(false);
+    }
+    else {
+      setError("All fields are required.");
+      setShowErrorPopup(true);
     }
   };
 
@@ -63,6 +68,7 @@ const TaskBox = () => {
     setTaskDate(task.date);
     setStartTime(task.start);
     setEndTime(task.end);
+    setImageURL(task.image);
     setSelectedColor(task.color);
     setShowEditPopup(true); // Open the edit popup
   };
@@ -80,17 +86,18 @@ const TaskBox = () => {
       )
     );
 
-    handleCloseEditPopup(); // This clears the edit popup values
+    handleCloseEditPopup();
   };
 
   const handleCloseEditPopup = () => {
     setShowEditPopup(false);
-    setSelectedTask(null); // Clear the selected task
-    setNewTask("");  // Clear the task title
-    setTaskDate(""); // Clear the task date
-    setStartTime(""); // Clear the start time
-    setEndTime(""); // Clear the end time
-    setSelectedColor("#cccccc"); // Reset color to default
+    setSelectedTask(null); 
+    setNewTask(""); 
+    setTaskDate("");
+    setStartTime("");
+    setEndTime(""); 
+    setImageURL("");
+    setSelectedColor("#cccccc");
   };
 
   const deleteTask = () => {
@@ -105,7 +112,7 @@ const TaskBox = () => {
     const taskDate = new Date(date);
     const currentDate = new Date();
     const diffTime = taskDate.getTime() - currentDate.getTime();
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Days difference
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
   const handleAddIconClick = () => {
@@ -113,6 +120,7 @@ const TaskBox = () => {
     setTaskDate("");
     setStartTime("");
     setEndTime("");
+    setImageURL("");
     setSelectedColor("#cccccc"); 
     setShowPopup(true); 
   };
@@ -122,7 +130,7 @@ const TaskBox = () => {
     const currentDateTime = new Date();
     if (selectedDateTime < currentDateTime) {
       setError("The selected date has already occurred.");
-      setShowErrorPopup(true); // Show error popup
+      setShowErrorPopup(true);
       return false;
     }
     setError("");
@@ -135,7 +143,7 @@ const TaskBox = () => {
       const end = new Date(`1970-01-01T${endTime}:00`);
       if (end <= start) {
         setError("End time must be after the start time.");
-        setShowErrorPopup(true); // Show error popup
+        setShowErrorPopup(true);
         return false;
       }
     }
@@ -279,6 +287,15 @@ const TaskBox = () => {
             className={styles.input}
           />
 
+          <label>Image:</label>
+          <input
+            type="text"
+            value={imageURL}
+            onChange={(e) => setImageURL(e.target.value)}
+            placeholder="Paste an image URL..."
+            className={styles.input}
+          />
+
           <div className={styles.colorOptions}>
             <span
               className={`${styles.color} ${selectedColor === "#fff88f" ? styles.selected : ""}`}
@@ -328,6 +345,7 @@ const TaskBox = () => {
       <div className={styles.taskCard}>
         {tasks.map((task) => (
           <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }} onClick={() => handleTaskClick(task)}>
+            {task.image && <img src={task.image} alt="Task" className={styles.taskImage} />}
             <h3>{task.title}</h3>
             <p>Date: {formatDate(task.date)}</p>
             <p>Start: {formatTime(task.start)}</p>
