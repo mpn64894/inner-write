@@ -2,8 +2,18 @@ import { useState } from "react";
 import styles from './TaskBox.module.css';
 import { IoIosAddCircle } from 'react-icons/io';
 
+type TaskType = {
+  id: number;
+  title: string;
+  date: string;
+  start: string;
+  end: string;
+  color: string;
+  daysLeft: number;
+};
+
 const TaskBox = () => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState<TaskType[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [newTask, setNewTask] = useState("");
   const [taskDate, setTaskDate] = useState("");
@@ -12,9 +22,9 @@ const TaskBox = () => {
   const [error, setError] = useState("");
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
-  const [selectedColor, setSelectedColor] = useState("#cccccc"); /* set default color to gray */
-  const [selectedTask, setSelectedTask] = useState(null);
-  
+  const [selectedColor, setSelectedColor] = useState("#cccccc"); // default color
+  const [selectedTask, setSelectedTask] = useState<TaskType | null>(null); // type selectedTask
+
   const addTask = () => {
     if (newTask.trim() && taskDate && startTime) {
       if (!isDateTimeValid() || !isEndTimeAfterStartTime()) return;
@@ -31,12 +41,13 @@ const TaskBox = () => {
       });
 
       const date = new Date(taskDate);
-      const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}-${date.getFullYear()}`;
+      const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate() + 1).padStart(2, '0') }-${date.getFullYear()}`;
+
 
       const task = {
         id: Date.now(),
         title: newTask,
-        date: formattedDate, 
+        date: formattedDate,
         start: formattedStartTime,
         end: formattedEndTime,
         color: selectedColor,
@@ -45,11 +56,11 @@ const TaskBox = () => {
 
       setTasks((prevTasks) =>
         [...prevTasks, task].sort((a, b) =>
-          new Date(a.date + " " + a.start) - new Date(b.date + " " + b.start)
+          new Date(`${a.date} ${a.start}`).getTime() - new Date(`${b.date} ${b.start}`).getTime()
         )
       );
 
-      // resets input fields and close popup
+      // Reset input fields and close popup
       setNewTask("");
       setTaskDate("");
       setStartTime("");
@@ -58,8 +69,8 @@ const TaskBox = () => {
     }
   };
 
-  const handleTaskClick = (task) => {
-    setSelectedTask(task); // Set the selected task for editing
+  const handleTaskClick = (task: TaskType) => {
+    setSelectedTask(task); 
     setNewTask(task.title);
     setTaskDate(task.date);
     setStartTime(task.start);
@@ -69,56 +80,91 @@ const TaskBox = () => {
   };
 
   const saveEditedTask = () => {
+    if (!selectedTask) return;
+  
+    console.log(selectedTask)
+
+    const formattedStartTime = new Date(`1970-01-01T${startTime}:00`).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  
+    const formattedEndTime = new Date(`1970-01-01T${endTime}:00`).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  
+    const date = new Date(taskDate);
+    const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}-${date.getFullYear()}`;
+  
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === selectedTask.id
-          ? { ...task, title: newTask, date: taskDate, start: startTime, end: endTime, color: selectedColor }
+          ? { ...task, title: newTask, date: formattedDate, start: formattedStartTime, end: formattedEndTime, color: selectedColor }
           : task
       )
     );
+  
+    // Reset the state after saving
+    handleCloseEditPopup(); // This clears the edit popup values
+  
+  };
+
+  const handleCloseEditPopup = () => {
     setShowEditPopup(false);
-    setSelectedTask(null);
+    setSelectedTask(null); // Clear the selected task
+    setNewTask("");  // Clear the task title
+    setTaskDate(""); // Clear the task date
+    setStartTime(""); // Clear the start time
+    setEndTime(""); // Clear the end time
+    setSelectedColor("#cccccc"); // Reset color to default
+  };
+
+  const deleteTask = () => {
+    if (selectedTask) {
+      setTasks((prevTasks) => prevTasks.filter(task => task.id !== selectedTask.id));
+      setShowEditPopup(false);
+      setSelectedTask(null);
+    }
+  };
+
+  const calculateDaysLeft = (date: string) => {
+    const taskDate = new Date(date);
+    const currentDate = new Date();
+    const diffTime = taskDate.getTime() - currentDate.getTime();
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); // Days difference
+  };
+
+  const handleAddIconClick = () => {
     setNewTask("");
     setTaskDate("");
     setStartTime("");
     setEndTime("");
+    setSelectedColor("#cccccc"); 
+    setShowPopup(true); 
   };
 
-  // calculates days left
-  const calculateDaysLeft = (date) => {
-    const taskDate = new Date(date);
-    const currentDate = new Date();
-    const diffTime = taskDate - currentDate;
-    return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
-  };
-
-  const handleAddIconClick = () => {
-    setShowPopup(true);
-  };
-
-  // checks if date and time are in the future
   const isDateTimeValid = () => {
     const selectedDateTime = new Date(`${taskDate}T${startTime}`);
     const currentDateTime = new Date();
-    
     if (selectedDateTime < currentDateTime) {
       setError("The selected date and time have already passed.");
-      setShowErrorPopup(true); // shows error popup
+      setShowErrorPopup(true); // Show error popup
       return false;
     }
     setError("");
     return true;
   };
 
-  // checks if end time is after start time
   const isEndTimeAfterStartTime = () => {
     if (startTime && endTime) {
       const start = new Date(`1970-01-01T${startTime}:00`);
       const end = new Date(`1970-01-01T${endTime}:00`);
-      
       if (end <= start) {
         setError("End time must be after the start time.");
-        setShowErrorPopup(true); // shows error popup
+        setShowErrorPopup(true); // Show error popup
         return false;
       }
     }
@@ -129,12 +175,13 @@ const TaskBox = () => {
   return (
     <div className={styles.tasksContainer}>
       <div className={styles.topPart}>
-        <h1 className={styles.upcommingEvents}>Upcomming Events</h1>
+        <h1 className={styles.upcommingEvents}>Upcoming Events</h1>
         <div className={styles.addButton} onClick={handleAddIconClick}>
           <IoIosAddCircle size={20} />
         </div>
       </div>
 
+      {/* Add and Edit Popup */}
       {showPopup && (
         <div className={styles.popup}>
           <label>Task:</label>
@@ -203,6 +250,7 @@ const TaskBox = () => {
         </div>
       )}
 
+      {/* Edit Popup */}
       {showEditPopup && (
         <div className={styles.popup}>
           <label>Task:</label>
@@ -268,11 +316,12 @@ const TaskBox = () => {
           
           <div className={styles.buttonContainer}>
             <button className={styles.saveButton} onClick={saveEditedTask}>Save</button>
-            <button className={styles.deleteButton} onClick={saveEditedTask}>Delete</button>
+            <button className={styles.deleteButton} onClick={deleteTask}>Delete</button>
           </div>
         </div>
       )}
 
+      {/* Error Popup */}
       {showErrorPopup && (
         <div className={styles.errorPopupOverlay}>
           <div className={styles.errorPopup}>
@@ -282,15 +331,16 @@ const TaskBox = () => {
         </div>
       )}
 
+      {/* Task List */}
       <div className={styles.taskList}>
         {tasks.map((task) => (
           <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }} onClick={() => handleTaskClick(task)}>
-          <h3>{task.title}</h3>
-          <p>Date: {task.date}</p>
-          <p>Start: {task.start}</p>
-          <p>End: {task.end}</p>
-          <p>Days Left: {task.daysLeft}</p>
-        </div>
+            <h3>{task.title}</h3>
+            <p>Date: {task.date}</p>
+            <p>Start: {task.start}</p>
+            <p>End: {task.end}</p>
+            <p>Days Left: {task.daysLeft}</p>
+          </div>
         ))}
       </div>
     </div>
