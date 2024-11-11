@@ -11,7 +11,7 @@ export default function HomePage() {
     return (
         <div>
             <Nav/>
-            <h1>{formattedDate}</h1>
+            <h1 style={{ textAlign: "center" }}>{formattedDate}</h1>
             <Dashboard/>
             <JournalEntry />
         </div>
