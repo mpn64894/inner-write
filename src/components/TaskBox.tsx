@@ -14,7 +14,7 @@ type TaskType = {
 
 const TaskBox = () => {
   const [tasks, setTasks] = useState<TaskType[]>([]);
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState(false); // create popup
   const [newTask, setNewTask] = useState("");
   const [taskDate, setTaskDate] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -25,24 +25,22 @@ const TaskBox = () => {
   const [selectedColor, setSelectedColor] = useState("#cccccc"); // default color
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null); // type selectedTask
 
+  const formatDate = (dateStr = "") => {
+    const [year, month, day] = dateStr.split('-');
+    return `${month}/${day}/${year}`;
+  };
+
+  const formatTime = (time = "") => {
+    return new Date(`1970-01-01T${time}`).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
+
   const addTask = () => {
     if (newTask.trim() && taskDate && startTime) {
       if (!isDateTimeValid() || !isEndTimeAfterStartTime()) return;
-
-      const formattedStartTime = new Date(`1970-01-01T${startTime}:00`).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      });
-      const formattedEndTime = new Date(`1970-01-01T${endTime}:00`).toLocaleTimeString([], {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      });
-
-      const date = new Date(taskDate);
-      const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate() + 1).padStart(2, '0') }-${date.getFullYear()}`;
-
 
       const task = {
         id: Date.now(),
@@ -84,21 +82,6 @@ const TaskBox = () => {
   
     console.log(selectedTask)
 
-    const formattedStartTime = new Date(`1970-01-01T${startTime}:00`).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-  
-    const formattedEndTime = new Date(`1970-01-01T${endTime}:00`).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-  
-    const date = new Date(taskDate);
-    const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}-${date.getFullYear()}`;
-  
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === selectedTask.id
@@ -106,10 +89,8 @@ const TaskBox = () => {
           : task
       )
     );
-  
-    // Reset the state after saving
+
     handleCloseEditPopup(); // This clears the edit popup values
-  
   };
 
   const handleCloseEditPopup = () => {
@@ -181,7 +162,7 @@ const TaskBox = () => {
         </div>
       </div>
 
-      {/* Add and Edit Popup */}
+      {/* Create Popup */}
       {showPopup && (
         <div className={styles.popup}>
           <label>Task:</label>
@@ -331,14 +312,14 @@ const TaskBox = () => {
         </div>
       )}
 
-      {/* Task List */}
-      <div className={styles.taskList}>
+      {/* Task Cards */}
+      <div className={styles.taskCard}>
         {tasks.map((task) => (
           <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }} onClick={() => handleTaskClick(task)}>
             <h3>{task.title}</h3>
-            <p>Date: {task.date}</p>
-            <p>Start: {task.start}</p>
-            <p>End: {task.end}</p>
+            <p>Date: {formatDate(task.date)}</p>
+            <p>Start: {formatTime(task.start)}</p>
+            <p>End: {formatTime(task.end)}</p>
             <p>Days Left: {task.daysLeft}</p>
           </div>
         ))}

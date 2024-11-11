@@ -35,7 +35,7 @@
   border-radius: 10px;
 }
 
-.taskList {
+.taskCard {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
