@@ -7,7 +7,6 @@
     margin: 10px auto;
     margin-bottom: 15px;
     width: 90%;
-
 }
 
 .entryWrapper {
@@ -16,13 +15,14 @@
     gap: 1rem; 
     width: 100%;
     margin: 10px;
-   
+    max-height: 100%;
 }
 
 .formContainer {
     width: 100%;
     flex-direction: column;
     align-items: flex-start;
+    height: 100%;
 }
 
 .moodWrapper {
@@ -30,7 +30,6 @@
     flex-direction: column;
     align-items: flex-start; 
     width: 100%;
-    margin-left: 1rem;
 }
 .moodWrapper h1{
     margin: 0 auto;
@@ -41,12 +40,10 @@
     grid-template-columns: repeat(2, 1fr); 
     gap: 10px;
     margin: 0 auto;
-    width: 18rem;
-    height: 18rem; 
 }
 .mood {
     width: 95%; 
-    height: 80%; 
+    height: 95%; 
     object-fit: cover;
     cursor: pointer;
     border-radius: 8px;
@@ -64,15 +61,19 @@
 .journalInput, .promptInput {
     flex-grow: 1;
     width: 100%; 
-    height: 200px; 
+    height: 100%; 
     border-radius: 8px;
     border: 1px solid #ccc; 
-    resize: horizontal; 
     box-sizing: border-box; 
+    resize: none;
 }
 .textareaWrapper {
     margin-bottom: 1rem;
-    width: 100%
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Allows wrapper to grow */
+    height: 100%; /* Matches the height of its parent */
 }
 
 .journalButton {
@@ -95,4 +96,10 @@
     background-color: #2a78b4; 
     transform: scale(1.05); 
     border-color: #1f5a8e; 
+}
+
+.formContainer > form 
+{
+    height: 45%;
+
 }
