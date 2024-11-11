@@ -9,7 +9,6 @@ function SignUp() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [firstName, setfirstName] = useState('')
-    const [lastName, setlastName] = useState('')
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -26,7 +25,6 @@ function SignUp() {
                 },
                 body: JSON.stringify({
                     firstName,
-                    lastName,
                     email,
                     password
                 }),
@@ -43,7 +41,6 @@ function SignUp() {
         <div className={styles.signUpContainer}>
         <p className={styles.title}>Sign Up</p>
         <form onSubmit={handleSignup}>
-          <div className={styles.nameFields}>
             <label className={styles.formLabel}>
               First Name
               <input
@@ -54,17 +51,6 @@ function SignUp() {
                 className={styles.formInput}
               />
             </label>
-            <label className={styles.formLabel}>
-              Last Name
-              <input
-                type="text"
-                value={lastName}
-                onChange={(e) => setlastName(e.target.value)}
-                required
-                className={styles.formInput}
-              />
-            </label>
-          </div>
           <label className={styles.formLabel}>
             Email
             <input
