@@ -10,9 +10,11 @@ const TaskBox = () => {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
   const [error, setError] = useState("");
+  const [showEditPopup, setShowEditPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [selectedColor, setSelectedColor] = useState("#cccccc"); /* set default color to gray */
-
+  const [selectedTask, setSelectedTask] = useState(null);
+  
   const addTask = () => {
     if (newTask.trim() && taskDate && startTime) {
       if (!isDateTimeValid() || !isEndTimeAfterStartTime()) return;
@@ -54,6 +56,32 @@ const TaskBox = () => {
       setEndTime("");
       setShowPopup(false);
     }
+  };
+
+  const handleTaskClick = (task) => {
+    setSelectedTask(task); // Set the selected task for editing
+    setNewTask(task.title);
+    setTaskDate(task.date);
+    setStartTime(task.start);
+    setEndTime(task.end);
+    setSelectedColor(task.color);
+    setShowEditPopup(true); // Open the edit popup
+  };
+
+  const saveEditedTask = () => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === selectedTask.id
+          ? { ...task, title: newTask, date: taskDate, start: startTime, end: endTime, color: selectedColor }
+          : task
+      )
+    );
+    setShowEditPopup(false);
+    setSelectedTask(null);
+    setNewTask("");
+    setTaskDate("");
+    setStartTime("");
+    setEndTime("");
   };
 
   // calculates days left
@@ -99,9 +127,9 @@ const TaskBox = () => {
   };
 
   return (
-    <div className={styles.tasksBox}>
+    <div className={styles.tasksContainer}>
       <div className={styles.topPart}>
-        <h1 className={styles.listHeader}>Master Todo List</h1>
+        <h1 className={styles.upcommingEvents}>Upcomming Events</h1>
         <div className={styles.addButton} onClick={handleAddIconClick}>
           <IoIosAddCircle size={20} />
         </div>
@@ -175,6 +203,76 @@ const TaskBox = () => {
         </div>
       )}
 
+      {showEditPopup && (
+        <div className={styles.popup}>
+          <label>Task:</label>
+          <input
+            type="text"
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            className={styles.input}
+          />
+          <button className={styles.closeButton} onClick={() => setShowEditPopup(false)}>X</button>
+
+          <label>Date:</label>
+          <input
+            type="date"
+            value={taskDate}
+            onChange={(e) => setTaskDate(e.target.value)}
+            className={styles.input}
+          />
+
+          <label>Start:</label>
+          <input
+            type="time"
+            value={startTime}
+            onChange={(e) => setStartTime(e.target.value)}
+            className={styles.input}
+          />
+
+          <label>End:</label>
+          <input
+            type="time"
+            value={endTime}
+            onChange={(e) => setEndTime(e.target.value)}
+            className={styles.input}
+          />
+
+          <div className={styles.colorOptions}>
+            <span
+              className={`${styles.color} ${selectedColor === "#fff88f" ? styles.selected : ""}`}
+              style={{ backgroundColor: "#fff88f" }}
+              onClick={() => setSelectedColor("#fff88f")}
+            ></span>
+            <span
+              className={`${styles.color} ${selectedColor === "#e0d4e7" ? styles.selected : ""}`}
+              style={{ backgroundColor: "#e0d4e7" }}
+              onClick={() => setSelectedColor("#e0d4e7")}
+            ></span>
+            <span
+              className={`${styles.color} ${selectedColor === "#d8eef7" ? styles.selected : ""}`}
+              style={{ backgroundColor: "#d8eef7" }}
+              onClick={() => setSelectedColor("#d8eef7")}
+            ></span>
+            <span
+              className={`${styles.color} ${selectedColor === "#d8e2dc" ? styles.selected : ""}`}
+              style={{ backgroundColor: "#d8e2dc" }}
+              onClick={() => setSelectedColor("#d8e2dc")}
+            ></span>
+            <span
+              className={`${styles.color} ${selectedColor === "#ffdfc8" ? styles.selected : ""}`}
+              style={{ backgroundColor: "#ffdfc8" }}
+              onClick={() => setSelectedColor("#ffdfc8")}
+            ></span>
+          </div>
+          
+          <div className={styles.buttonContainer}>
+            <button className={styles.saveButton} onClick={saveEditedTask}>Save</button>
+            <button className={styles.deleteButton} onClick={saveEditedTask}>Delete</button>
+          </div>
+        </div>
+      )}
+
       {showErrorPopup && (
         <div className={styles.errorPopupOverlay}>
           <div className={styles.errorPopup}>
@@ -186,13 +284,13 @@ const TaskBox = () => {
 
       <div className={styles.taskList}>
         {tasks.map((task) => (
-          <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }}>
-            <h3>{task.title}</h3>
-            <p>Date: {task.date}</p>
-            <p>Start: {task.start}</p>
-            <p>End: {task.end}</p>
-            <p>Days Left: {task.daysLeft}</p>
-          </div>
+          <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }} onClick={() => handleTaskClick(task)}>
+          <h3>{task.title}</h3>
+          <p>Date: {task.date}</p>
+          <p>Start: {task.start}</p>
+          <p>End: {task.end}</p>
+          <p>Days Left: {task.daysLeft}</p>
+        </div>
         ))}
       </div>
     </div>

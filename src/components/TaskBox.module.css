@@ -1,7 +1,7 @@
-.tasksBox {
-  width: 60%;
+.tasksContainer {
+  width: 70%;
   height: 570px;
-  max-width: 1100px;
+  max-width: 1280px;
   margin: 20px;
   background-color: #ffe9f8;
   border-radius: 10px;
@@ -9,7 +9,7 @@
   box-shadow: 0 4px 8px rgba(233, 230, 230, 0.1);
 }
 
-.listHeader {
+.upcommingEvents {
   font-size: 1.8em;
   font-weight: bold;
   color: #333;
@@ -31,19 +31,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 5px;
   border-radius: 10px;
-}
-
-.taskItem {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px;
-  background-color: #ffffff;
-  border-radius: 5px;
-  margin-bottom: 5px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .taskList {
@@ -65,6 +54,9 @@
   align-items: flex-start;
   gap: 5px;
   font-size: 0.9em;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .taskItem h3 {
@@ -72,6 +64,9 @@
   font-size: 1.1em;
   font-weight: bold;
   color: #333;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .taskItem p {
@@ -102,7 +97,6 @@
   font-size: 0.9em;
   margin-top: 5px;
 }
-
 
 .input {
   padding: 8px;
@@ -179,6 +173,46 @@
 
 .createButton:hover {
   background-color: #45ff67;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.saveButton {
+  background-color: #b0ffad;
+  color: #333;
+  padding: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 47%;
+}
+
+.saveButton:hover {
+  background-color: #45ff67;
+}
+
+.deleteButton {
+  background-color: #ffadad;
+  color: #333;
+  padding: 8px;
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+  width: 47%;
+}
+
+.deleteButton:hover {
+  background-color: #fc3737;
 }
 
 .errorPopupOverlay {
