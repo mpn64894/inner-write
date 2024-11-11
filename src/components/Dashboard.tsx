@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import styles from './Dashboard.module.css';
 import TaskBox from './TaskBox';
 import TodayPlan from './TodayPlan';
