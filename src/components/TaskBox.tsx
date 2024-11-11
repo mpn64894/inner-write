@@ -25,19 +25,6 @@ const TaskBox = () => {
   const [selectedColor, setSelectedColor] = useState("#cccccc"); // default color
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null); // type selectedTask
 
-  const formatDate = (dateStr = "") => {
-    const [year, month, day] = dateStr.split('-');
-    return `${month}/${day}/${year}`;
-  };
-
-  const formatTime = (time = "") => {
-    return new Date(`1970-01-01T${time}`).toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: true,
-    });
-  };
-
   const addTask = () => {
     if (newTask.trim() && taskDate && startTime) {
       if (!isDateTimeValid() || !isEndTimeAfterStartTime()) return;
@@ -78,7 +65,7 @@ const TaskBox = () => {
   };
 
   const saveEditedTask = () => {
-    if (!selectedTask) return;
+    if (!selectedTask || !isDateTimeValid() || !isEndTimeAfterStartTime()) return;
   
     console.log(selectedTask)
 
@@ -131,7 +118,7 @@ const TaskBox = () => {
     const selectedDateTime = new Date(`${taskDate}T${startTime}`);
     const currentDateTime = new Date();
     if (selectedDateTime < currentDateTime) {
-      setError("The selected date and time have already passed.");
+      setError("The selected date has already occurred.");
       setShowErrorPopup(true); // Show error popup
       return false;
     }
@@ -151,6 +138,19 @@ const TaskBox = () => {
     }
     setError("");
     return true;
+  };
+
+  const formatDate = (dateStr = "") => {
+    const [year, month, day] = dateStr.split('-');
+    return `${month}/${day}/${year}`;
+  };
+
+  const formatTime = (time = "") => {
+    return new Date(`1970-01-01T${time}`).toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true,
+    });
   };
 
   return (
