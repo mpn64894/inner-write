@@ -6,7 +6,7 @@
     background: #bee1e6;
     margin: 10px auto;
     margin-bottom: 15px;
-    width: 98%;
+    width: 90%;
 
 }
 
@@ -32,14 +32,17 @@
     width: 100%;
     margin-left: 1rem;
 }
+.moodWrapper h1{
+    margin: 0 auto;
+}
 
 .moodGrid {
     display: grid;
     grid-template-columns: repeat(2, 1fr); 
     gap: 10px;
-    
-    width: 285px;
-    height: 285px; 
+    margin: 0 auto;
+    width: 18rem;
+    height: 18rem; 
 }
 .mood {
     width: 95%; 
