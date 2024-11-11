@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Nav from '../../../components/Nav'
-import TodayPlan from '@/components/TodayPlan'
+import Dashboard from '@/components/Dashboard'
 import JournalEntry from '@/components/JournalEntry'
 
 function AuthHomePage() {
@@ -40,7 +40,7 @@ function AuthHomePage() {
   return (
     <div>
         <Nav isAuthenticatedPage={true}/>
-        <TodayPlan/>
+        <Dashboard/>
         <JournalEntry />
     </div>
     )
