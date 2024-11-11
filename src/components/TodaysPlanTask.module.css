@@ -1,18 +1,21 @@
 .task {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    text-overflow: ellipsis;
-  }
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  text-overflow: ellipsis;
+  overflow: hidden; 
+  white-space: nowrap; 
+  max-width:200px;
+}
   
-  .checkbox {
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-  }
-  
-  .completed {
-    text-decoration: line-through;
-    color: #888;
-  }
+.checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.completed {
+  text-decoration: line-through;
+  color: #888;
+}
   
