@@ -9,13 +9,12 @@ interface JournalEntryType {
     moodString: string;
   }
   const MOODS = [
-    "./moods/smug.png" ,
-    "./moods/angry.png" ,
-    "./moods/drained.png",
-    "./moods/happy.png" ,
-    "./moods/overit.png" ,
-    "./moods/sad.png"
-
+    "/moods/smug.png" ,
+    "/moods/angry.png" ,
+    "/moods/drained.png",
+    "/moods/happy.png" ,
+    "/moods/overit.png" ,
+    "/moods/sad.png"
   ]
 
     const JournalEntry = () => {
