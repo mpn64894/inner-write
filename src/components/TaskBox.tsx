@@ -8,6 +8,7 @@ type TaskType = {
   date: string;
   start: string;
   end: string;
+  image: string;
   color: string;
   daysLeft: number;
 };
@@ -19,6 +20,7 @@ const TaskBox = () => {
   const [taskDate, setTaskDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+  const [imageURL, setImageURL] = useState("");
   const [error, setError] = useState("");
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
@@ -35,6 +37,7 @@ const TaskBox = () => {
         date: taskDate,
         start: startTime,
         end: endTime,
+        image: imageURL,
         color: selectedColor,
         daysLeft: calculateDaysLeft(taskDate),
       };
@@ -196,6 +199,15 @@ const TaskBox = () => {
             type="time"
             value={endTime}
             onChange={(e) => setEndTime(e.target.value)}
+            className={styles.input}
+          />
+
+          <label>Image:</label>
+          <input
+            type="text"
+            value={imageURL}
+            onChange={(e) => setImageURL(e.target.value)}
+            placeholder="Paste an image URL..."
             className={styles.input}
           />
 
