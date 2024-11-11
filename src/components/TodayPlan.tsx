@@ -40,6 +40,14 @@ function TodayPlan() {
     }
   };
 
+  const handleDelete = (id: string) => {
+    setTasks((prevTasks) => {
+      const updatedTasks = { ...prevTasks };
+      delete updatedTasks[id]; // Remove the task for the specific hour
+      return updatedTasks;
+    });
+  }
+
   return (
     <div className={styles.todayPlan}>
       <div className={styles.topPart}>
@@ -62,8 +70,10 @@ function TodayPlan() {
         {hours.map((hour, index) => (
           <TimeSlot
             key={index}
+            id = {hour}
             time={hour}
             task={tasks[hour]}
+            onDelete={handleDelete}
           />
         ))}
       </div>
