@@ -62,6 +62,7 @@ const TaskBox = () => {
   const [selectedColor, setSelectedColor] = useState("#cccccc"); // default color
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null); // type selectedTask
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isDummyTask, setIsDummyTask] = useState(true);
 
   useEffect(() => {
     // Check for authentication cookie
@@ -215,6 +216,7 @@ const TaskBox = () => {
           <div 
           className={`${styles.addButton} ${isAuthenticated ? styles.enabled : styles.disabled}`} 
           onClick={isAuthenticated ? handleAddIconClick : undefined}
+          style={{ cursor: isAuthenticated ? "pointer" : "default", opacity: isAuthenticated ? 1 : 0.5 }}
         >
           <IoIosAddCircle size={20} />
           </div>
