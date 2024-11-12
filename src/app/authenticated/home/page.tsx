@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Nav from '../../../components/Nav'
+import TaskBox from '@/components/TaskBox';
 import Dashboard from '@/components/Dashboard'
 import JournalEntry from '@/components/JournalEntry'
 
