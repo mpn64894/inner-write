@@ -62,7 +62,6 @@ const TaskBox = () => {
   const [selectedColor, setSelectedColor] = useState("#cccccc"); // default color
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null); // type selectedTask
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isDummyTask, setIsDummyTask] = useState(true);
 
   useEffect(() => {
     // Check for authentication cookie
@@ -393,7 +392,8 @@ const TaskBox = () => {
       {/* Task Cards */}
       <div className={styles.taskCard}>
         {tasks.map((task) => (
-          <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }} onClick={() => handleTaskClick(task)}>
+          <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }} 
+            onClick={() => isAuthenticated ? handleTaskClick(task) : undefined}>
             {task.image && <img src={task.image} alt="Task" className={styles.taskImage} />}
             <h3>{task.title}</h3>
             <p>Date: {formatDate(task.date)}</p>
