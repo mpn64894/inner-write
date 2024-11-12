@@ -76,7 +76,7 @@
     height: 100%; /* Matches the height of its parent */
 }
 
-.journalButton {
+.journalButton.enabled {
     margin-top: 1rem;
     margin: auto;
     width: 250px;
@@ -92,7 +92,26 @@
     transition: all 0.3s ease; 
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
 }
-.journalButton:hover {
+
+.journalButton.disabled {
+    margin-top: 1rem;
+    margin: auto;
+    width: 250px;
+    background-color: #3498db;
+    opacity: 0.5;
+    color: white; 
+    font-size: 16px;
+    padding: 10px 20px; 
+    border: 2px solid transparent; 
+    border-radius: 8px; 
+    cursor: default; 
+    text-transform: uppercase; 
+    font-weight: bold; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.journalButton.enabled:hover {
     background-color: #2a78b4; 
     transform: scale(1.05); 
     border-color: #1f5a8e; 
