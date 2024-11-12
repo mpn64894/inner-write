@@ -68,11 +68,15 @@
     background-color: #f44336;
 }
 
-.addLogo:hover, .switchButton:hover
-{
-    cursor: pointer;
+.addLogo.disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
+  
+  .addLogo.enabled:hover {
     transform: scale(1.1);
-}
+    cursor: pointer;
+  }
 
 .timeline
 {

@@ -3,8 +3,9 @@ import { FaHeart } from 'react-icons/fa';
 import { IoIosAddCircle } from 'react-icons/io';
 import { GoArrowSwitch } from 'react-icons/go';
 import { useState } from "react";
+import { useEffect } from "react";
 import TimeSlot from "./TimeSlot";
-
+import Cookies from 'js-cookie';
 
 
 const hours = [
@@ -19,6 +20,15 @@ function TodayPlan() {
   const [showPopup, setShowPopup] = useState(false);
   const [selectedHour, setSelectedHour] = useState("");
   const [newTask, setNewTask] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check for authentication cookie
+    const authToken = Cookies.get('token');
+    if (authToken) {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const toggleView = () => {
     setView(!view);
@@ -57,8 +67,10 @@ function TodayPlan() {
             <FaHeart size={20} />
           </div>
           {/* Clickable icon to add task */}
-          <div className={styles.addLogo}>
-            <IoIosAddCircle size={20} onClick={handleAddIconClick} />
+          <div className={`${styles.addLogo} ${isAuthenticated ? styles.enabled : styles.disabled}`}>
+            <IoIosAddCircle size={20} 
+            onClick= {isAuthenticated ? handleAddIconClick : undefined}
+            style={{ cursor: isAuthenticated ? "pointer" : "default", opacity: isAuthenticated ? 1 : 0.5}}/>
           </div>
         </div>
         <div onClick={toggleView} className={styles.switchButton}>
