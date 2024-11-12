@@ -73,10 +73,10 @@
     opacity: 0.5;
   }
   
-  .addLogo.enabled:hover {
-    transform: scale(1.1);
-    cursor: pointer;
-  }
+.addLogo.enabled:hover {
+transform: scale(1.1);
+cursor: pointer;
+}
 
 .timeline
 {
