@@ -56,11 +56,8 @@ const JournalEntry = () => {
         setContent('');
         setPrompt('');
         setMoodString('');
-
-
     }
 
-    console.log("is authenticated?" + isAuthenticated)
     return (
         <div className={styles.journalContainer}>
             <div className={styles.entryWrapper}>

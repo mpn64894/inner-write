@@ -32,10 +32,18 @@ export async function POST(req: NextRequest) {
   // userID when we get a db set up
 
   let token = null;
-  if (!(user == null)){
+  if (user){
       token = jwt.sign({ userId: user?.userId }, process.env.JWT_SECRET as string, {
       expiresIn: '2h',
     })
   } 
+  console.log("users: " + user)
+  if (!user) {
+    // Authentication failed, send a failure response
+    return NextResponse.json(
+      { message: "Invalid email or password" }, 
+      { status: 401 } // Unauthorized status code
+    )
+  }
   return NextResponse.json({ token })
 }

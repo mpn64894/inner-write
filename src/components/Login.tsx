@@ -24,7 +24,9 @@ function LoginPage() {
         }),
       })
 
-      if (!response.ok) throw new Error('Login failed')
+      if (!response.ok) {
+        alert("Email or Password is incorrect")
+      }
 
       const { token } = await response.json()
       if (token) {
