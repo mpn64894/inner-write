@@ -13,6 +13,19 @@ type TaskType = {
   daysLeft: number;
 };
 
+// const dummyTasks: TaskType[] = [
+//   {
+//     id: 1,
+//     title: "Pikachu",
+//     date: "2024-11-15",
+//     start: "11:00",
+//     end: "2:00",
+//     image: "https://preview.redd.it/14tzna9f3681.jpg?width=640&crop=smart&auto=webp&s=916409081bf82702fcb8be37f562dd1fcf1ce867",
+//     color: "yellow",
+//     daysLeft: 4,
+//   }
+// ];
+
 const TaskBox = () => {
   const [tasks, setTasks] = useState<TaskType[]>([]);
   const [showPopup, setShowPopup] = useState(false); // create popup
