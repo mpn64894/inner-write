@@ -1,5 +1,5 @@
-import connectMongoDB from "../../../libs/mongodb";
-import JournalEntry from "../../../models/journal-entry-schema";
+import connectMongoDB from "../../../../src/libs/mongodb";
+import JournalEntry from "../../../../src/models/journal-entry-schema";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
