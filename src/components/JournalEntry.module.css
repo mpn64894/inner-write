@@ -4,9 +4,9 @@
     padding: 15px;
     border: 3px solid #eae4e9;
     background: #bee1e6;
-    margin: 10px auto;
+    margin: 5px auto;
     margin-bottom: 15px;
-    width: 90%;
+    width: 97%;
 }
 
 .entryWrapper {
@@ -18,8 +18,33 @@
     max-height: 100%;
 }
 
-.formContainer {
+
+.inputWrapper {
+    margin-bottom: 1rem;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+} 
+
+.inputWrapper label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.inputWrapper input {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+.formContainer {
+    width: 95%;
     flex-direction: column;
     align-items: flex-start;
     height: 100%;
@@ -57,6 +82,8 @@
 .selectedMood {
     border: 3px solid rgb(150, 201, 159);
 }
+
+
 
 .journalInput, .promptInput {
     flex-grow: 1;
@@ -120,5 +147,5 @@
 
 .formContainer > form 
 {
-    height: 45%;
+    height: 40%;
 }

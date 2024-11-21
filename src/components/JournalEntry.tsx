@@ -69,6 +69,16 @@ const JournalEntry = () => {
                 <div className={styles.formContainer}>
                     <h1>Today's Thoughts</h1>
                     <form onSubmit={handleAddEntry} className={styles.form}>
+                        <div className={styles.inputWrapper}>
+                             <input
+                                type="text"
+                                className={styles.titleInput}
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                                placeholder="Title of your entry..."
+                                required
+                             />
+                        </div>
                         <div className={styles.textareaWrapper}>
                             <textarea
                                 className={styles.journalInput}
