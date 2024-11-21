@@ -67,13 +67,14 @@
     box-sizing: border-box; 
     resize: none;
 }
+
 .textareaWrapper {
     margin-bottom: 1rem;
     width: 100%;
     display: flex;
     flex-direction: column;
-    flex-grow: 1; /* Allows wrapper to grow */
-    height: 100%; /* Matches the height of its parent */
+    flex-grow: 1; 
+    height: 100%; 
 }
 
 .journalButton.enabled {

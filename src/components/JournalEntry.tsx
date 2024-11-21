@@ -6,7 +6,10 @@ import Cookies from 'js-cookie';
 
 
 interface JournalEntryType {
-    id: number;
+    id?: string;
+    user?: string;
+    title: string;
+    dateAdded?: string;
     content: string;
     prompt: string;
     moodString: string;
@@ -23,6 +26,7 @@ const MOODS = [
 
 const JournalEntry = () => {
     const [entries, setEntries] = useState<JournalEntryType[]>([]);
+    const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
     const [prompt, setPrompt] = useState('');
     const [moodString, setMoodString] = useState('');
@@ -39,13 +43,13 @@ const JournalEntry = () => {
     const handleAddEntry = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!content || !moodString) {
-            alert('Please fill in all fields');
+        if (!title || !content || !moodString) {
+            alert('Please fill in all required fields');
             return;
-        }
+          }
 
         const newEntry : JournalEntryType = {
-            id: Date.now(),
+            title,
             content,
             prompt,
             moodString,
@@ -53,6 +57,7 @@ const JournalEntry = () => {
         };
 
         setEntries([newEntry, ...entries]);
+        setTitle('');
         setContent('');
         setPrompt('');
         setMoodString('');
