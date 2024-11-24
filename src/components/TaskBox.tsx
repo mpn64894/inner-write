@@ -13,6 +13,7 @@ type TaskType = {
   image: string;
   color: string;
   daysLeft: number;
+  completed: boolean;
 };
 
 const dummyTasks: TaskType[] = [
@@ -25,6 +26,7 @@ const dummyTasks: TaskType[] = [
     image: "https://cdn.vox-cdn.com/thumbor/X6SXIp7SNGuXE6IRcCZuVu8m3J0=/0x0:3072x4080/1200x900/filters:focal(1143x2660:1633x3150):no_upscale()/cdn.vox-cdn.com/uploads/chorus_image/image/71633539/PXL_20220830_183956022.PORTRAIT.0.jpg",
     color: "yellow",
     daysLeft: 4,
+    completed: false,
   },
   {
     id: 2,
@@ -35,6 +37,7 @@ const dummyTasks: TaskType[] = [
     image: "https://www.verywellmind.com/thmb/Z5c1MgXTWvzGZtvh3l-qZNRn0qo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-172163714-56910a493df78cafda818537.jpg",
     color: "red",
     daysLeft: 7,
+    completed: false,
   },
   {
     id: 3,
@@ -45,6 +48,7 @@ const dummyTasks: TaskType[] = [
     image: "https://www.orangecountyfair.com/images/site/rides/D1B3EE71-95DC-4709-BC05-CD7AB556B701.44384.6965046296-G.jpg",
     color: "gray",
     daysLeft: 12,
+    completed: false,
   }
 ];
 
@@ -62,6 +66,7 @@ const TaskBox = () => {
   const [selectedColor, setSelectedColor] = useState("#cccccc"); // default color
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null); // type selectedTask
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     // Check for authentication cookie
@@ -84,6 +89,7 @@ const TaskBox = () => {
         image: imageURL,
         color: selectedColor,
         daysLeft: calculateDaysLeft(taskDate),
+        completed: false,
       };
 
       setTasks((prevTasks) =>
@@ -107,15 +113,16 @@ const TaskBox = () => {
   };
 
   const handleTaskClick = (task: TaskType) => {
-    setSelectedTask(task); 
+    setSelectedTask(task);
     setNewTask(task.title);
     setTaskDate(task.date);
     setStartTime(task.start);
     setEndTime(task.end);
     setImageURL(task.image);
     setSelectedColor(task.color);
-    setShowEditPopup(true); // Open the edit popup
-  };
+    setIsCompleted(task.completed);
+    setShowEditPopup(true);
+  };  
 
   const saveEditedTask = () => {
     if (!selectedTask || !isDateTimeValid() || !isEndTimeAfterStartTime()) return;
@@ -125,7 +132,17 @@ const TaskBox = () => {
     setTasks((prevTasks) =>
       prevTasks.map((task) =>
         task.id === selectedTask.id
-          ? { ...task, title: newTask, date: taskDate, start: startTime, end: endTime, color: selectedColor }
+          ? {
+              ...task,
+              title: newTask,
+              date: taskDate,
+              start: startTime,
+              end: endTime,
+              color: selectedColor,
+              image: imageURL,
+              daysLeft: calculateDaysLeft(taskDate),
+              completed: task.completed,
+            }
           : task
       )
     );
@@ -142,6 +159,7 @@ const TaskBox = () => {
     setEndTime(""); 
     setImageURL("");
     setSelectedColor("#cccccc");
+    setIsCompleted(false);
   };
 
   const deleteTask = () => {
@@ -194,6 +212,14 @@ const TaskBox = () => {
     setError("");
     return true;
   };
+
+  const toggleCompleted = (taskId: number) => {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === taskId ? { ...task, completed: !task.completed } : task
+      )
+    );
+  };  
 
   const formatDate = (dateStr = "") => {
     const [year, month, day] = dateStr.split('-');
@@ -392,10 +418,25 @@ const TaskBox = () => {
       {/* Task Cards */}
       <div className={styles.taskCard}>
         {tasks.map((task) => (
-          <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }} 
-            onClick={() => isAuthenticated ? handleTaskClick(task) : undefined}>
+          <div
+            key={task.id}
+            className={`${styles.taskItem} ${task.completed ? styles.completed : ""}`}
+            style={{ borderColor: task.color }}
+            onClick={() => handleTaskClick(task)}
+          >
             {task.image && <img src={task.image} alt="Task" className={styles.taskImage} />}
-            <h3>{task.title}</h3>
+            <div className={styles.titleContainer}>
+              <h3>{task.title}</h3>
+              <label className={styles.checkboxContainer}>
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={() => toggleCompleted(task.id)}
+                  disabled={!isAuthenticated}
+                />
+              </label>
+            </div>
             <p>Date: {formatDate(task.date)}</p>
             <p>Start: {formatTime(task.start)}</p>
             <p>End: {formatTime(task.end)}</p>
