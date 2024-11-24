@@ -1,21 +1,24 @@
-/* src/components/TimeSlot.module.css */
-
 .timeSlot {
-    display: flex;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid #e0e0e0;
-  }
-  
-  .time {
-    width: 50px;
-    font-size: 0.9em;
-    color: #666;
-  }
-  
-  .addIcon {
-    cursor: pointer;
-    color: #4caf50; /* Green color for add icon */
-    margin-left: 8px;
-  }
-  
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.time {
+  width: 50px;
+  font-size: 0.9em;
+  color: #666;
+}
+
+.taskWithDelete {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%; 
+  padding: 0 10px;
+}
+
+.deleteIcon {
+  cursor: pointer;
+}

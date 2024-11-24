@@ -25,15 +25,20 @@
 .authButton button {
     margin: 5px;
     padding: 8px 12px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    border-radius: 4px;
+    color: rgb(0, 0, 0);
+    border: 1px solid black;
+    border-radius: 8px;
     cursor: pointer;
 }
 
-.authButton .logoutBtn {
-    background-color: #FF4136;
+.authButton button:hover {
+    transition-duration: 200ms;
+    background-color: rgb(222, 199, 238);
+}
+
+.authButton .logoutBtn:hover {
+    transition-duration: 200ms;
+    background-color: rgb(233, 155, 155);
 }
 
 .authButton button:hover {

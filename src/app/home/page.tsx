@@ -1,6 +1,6 @@
 "use client"
 import Nav from "../../components/Nav"
-import TodayPlan from "../../components/TodayPlan";
+import Dashboard from "../../components/Dashboard";
 import JournalEntry from "../../components/JournalEntry";
 
 export default function HomePage() {
@@ -11,9 +11,8 @@ export default function HomePage() {
     return (
         <div>
             <Nav/>
-            <h1>{formattedDate}</h1>
-            
-            <TodayPlan/>
+            <h1 style={{ textAlign: "center" }}>{formattedDate}</h1>
+            <Dashboard/>
             <JournalEntry />
         </div>
     );

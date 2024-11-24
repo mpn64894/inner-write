@@ -4,11 +4,15 @@ import jwt from 'jsonwebtoken'
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Nav from '../../../components/Nav'
-import TodayPlan from '@/components/TodayPlan'
+import TaskBox from '@/components/TaskBox';
+import Dashboard from '@/components/Dashboard'
 import JournalEntry from '@/components/JournalEntry'
 
 function AuthHomePage() {
   const router = useRouter()
+  const today: Date = new Date();
+  const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate: string = new Intl.DateTimeFormat('en-US', options).format(today);
 
   useEffect(() => {
     const token = Cookies.get('token')
@@ -40,7 +44,8 @@ function AuthHomePage() {
   return (
     <div>
         <Nav isAuthenticatedPage={true}/>
-        <TodayPlan/>
+        <h1 style={{ textAlign: "center" }}>{formattedDate}</h1>
+        <Dashboard/>
         <JournalEntry />
     </div>
     )
