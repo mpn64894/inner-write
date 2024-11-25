@@ -50,14 +50,13 @@ const JournalEntry = () => {
           const token = Cookies.get('token'); // Assuming the user ID is stored in a cookie
           const decoded = jwtDecode<{ userId: string }>(token as string);
           const userId = decoded.userId;
-          console.log(userId)
           if (!userId) {
               alert("User not authenticated.");
               return;
           }
           
         const newEntry : JournalEntryType = {
-            // user: userId,
+            user: userId,
             title,
             content,
             prompt,
