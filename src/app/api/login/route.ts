@@ -2,25 +2,21 @@ import { NextRequest, NextResponse } from 'next/server'
 import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 import { time } from 'console';
+import User from '@/models/user-schema';
 
 // authenticate with mongodb and hceck if user in db
-async function authenticateUser(email: string, password: string) {
-  let db = null
 
+export async function authenticateUser(email: string, password: string) {
+  const user = await User.findOne({ email });
 
-  // Dummy user data
-const dummyUser = {
-  email: 'test@gmail.com',
-  password: '123', // You can choose any password for testing
-};
-
-  // Check if the database instance has been initialized
-  if (!db) {
+  if (!user) {
+    return null; // No user found
   }
-  if (email === dummyUser.email && password === dummyUser.password) {
-    return { userId: dummyUser.email }; // Use email as user ID
+
+  if (email === user.email && password === user.password ) {
+    return {userId: user.email};
   }
-  return null; // Return null if authentication fails
+  return null;
 }
 
 export async function POST(req: NextRequest) {

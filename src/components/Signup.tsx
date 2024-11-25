@@ -9,12 +9,16 @@ function SignUp() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [firstName, setfirstName] = useState('')
+    const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
+    const router = useRouter()
 
     const handleSignup = async (e: React.FormEvent) => {
         e.preventDefault()
 
         if (password != confirmPassword) {
-            alert("Passwords don't match!")
+          setError("Passwords don't match!")
+          return
         }
 
         try {
@@ -29,11 +33,25 @@ function SignUp() {
                     password
                 }),
             })
-            if (!response.ok) throw new Error ('Sigup failed') 
-        } catch (error) {
-            console.error(error)
-        }
-    }
+            if (!response.ok) {
+              throw new Error('Signup failed')
+          }
+
+          const data = await response.json()
+
+          if (data.message === 'User registered successfully') {
+              setSuccess('Signup successful! Redirecting to login...')
+              setTimeout(() => {
+                  router.push('/login')
+              }, 2000) // Redirect after 2 seconds
+          }
+      } catch (error) {
+          console.error(error)
+          setError('Error during signup. Please try again.')
+      }
+  }
+           
+    
     return (
         <div>
             <Nav isSignUpPage={true}></Nav>

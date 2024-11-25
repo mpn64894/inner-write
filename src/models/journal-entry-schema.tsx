@@ -3,7 +3,7 @@ import mongoose, {Schema, Document, Model } from "mongoose";
 
 
 export interface IJournalEntry extends Document {
-    user: mongoose.Types.ObjectId;
+    user: mongoose.Schema.Types.ObjectId;
     title: string;
     dateAdded: Date;
     content: string;
@@ -13,7 +13,7 @@ export interface IJournalEntry extends Document {
 
 const journalEntrySchema: Schema = new Schema<IJournalEntry> ({
     user: { 
-        type: Schema.Types.ObjectId, 
+        type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
         required: true 
     },

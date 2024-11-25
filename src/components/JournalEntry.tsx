@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import styles from './JournalEntry.module.css';
 import Cookies from 'js-cookie';
-
+import jwt from 'jsonwebtoken';
 
 
 interface JournalEntryType {
@@ -33,34 +33,60 @@ const JournalEntry = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false)
 
     useEffect(() => {
-        // Check for authentication cookie
         const authToken = Cookies.get('token');
+        
         if (authToken) {
             setIsAuthenticated(true);
-        }
-    }, []);
+          }
+        }, []);
 
-    const handleAddEntry = (e: React.FormEvent) => {
+    const handleAddEntry = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!title || !content || !moodString) {
             alert('Please fill in all required fields');
             return;
           }
-
+          const userId = Cookies.get('userId'); // Assuming the user ID is stored in a cookie
+          if (!userId) {
+              alert("User not authenticated.");
+              return;
+          }
+          
         const newEntry : JournalEntryType = {
+            user: userId,
             title,
             content,
             prompt,
             moodString,
             
         };
+        try {
+                const response = await fetch('/api/journal', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newEntry),
+                });
 
-        setEntries([newEntry, ...entries]);
-        setTitle('');
-        setContent('');
-        setPrompt('');
-        setMoodString('');
+                if (!response.ok) {
+                    throw new Error('Failed to add entry');
+                }
+
+                const result = await response.json();
+                alert(result.message);
+                
+                // Optionally refresh entries or clear the form
+                setEntries([newEntry, ...entries]);
+                setTitle('');
+                setContent('');
+                setPrompt('');
+                setMoodString('');
+        } catch (error) {
+            console.error(error);
+            alert('Something went wrong. Please try again.');
+        }
     }
 
     return (
