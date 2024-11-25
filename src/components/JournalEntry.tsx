@@ -64,26 +64,26 @@ const JournalEntry = () => {
             
         };
         try {
-                const response = await fetch('/api/journal', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(newEntry),
-                });
+            const response = await fetch('/api/journal', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newEntry),
+            });
 
-                if (!response.ok) {
-                    throw new Error('Failed to add entry');
-                }
+            if (!response.ok) {
+                throw new Error('Failed to add entry');
+            }
 
-                const result = await response.json();
-                alert(result.message);
-                
-                // Optionally refresh entries or clear the form
-                setEntries([newEntry, ...entries]);
-                setTitle('');
-                setContent('');
-                setPrompt('');
+            const result = await response.json();
+            alert(result.message);
+            
+            // Optionally refresh entries or clear the form
+            setEntries([newEntry, ...entries]);
+            setTitle('');
+            setContent('');
+            setPrompt('');
                 setMoodString('');
         } catch (error) {
             console.error(error);
