@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import styles from './JournalEntry.module.css';
 import Cookies from 'js-cookie';
-import jwt from 'jsonwebtoken';
+import { jwtDecode } from "jwt-decode";
 
 
 interface JournalEntryType {
@@ -47,14 +47,17 @@ const JournalEntry = () => {
             alert('Please fill in all required fields');
             return;
           }
-          const userId = Cookies.get('userId'); // Assuming the user ID is stored in a cookie
+          const token = Cookies.get('token'); // Assuming the user ID is stored in a cookie
+          const decoded = jwtDecode<{ userId: string }>(token as string);
+          const userId = decoded.userId;
+          console.log(userId)
           if (!userId) {
               alert("User not authenticated.");
               return;
           }
           
         const newEntry : JournalEntryType = {
-            user: userId,
+            // user: userId,
             title,
             content,
             prompt,
