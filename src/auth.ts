@@ -1,11 +1,11 @@
 import { authConfig } from "./auth.config";
 import NextAuth from "next-auth";
-import CredentialsProvider from "next-autho/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import User, { IUser } from "./models/user-schema";
+import { User } from "./models/user-schema";
 
 export const {
-    handlers: {GET, POST},
+    handlers: { GET, POST },
     auth, 
     signIn,
     signOut,
@@ -29,11 +29,12 @@ export const {
                             user.password
                         );
                         if (isMatch)  {
-                            return {
-                                id: user._id.toString();
-                                email: user.email,
-                                name: user.name,
-                            }
+                           // return {
+                                console.log("Logged in");
+                                // id: user._id.toString(),
+                                // email: user.email,
+                                // firstName: user.firstName,
+                         //   }
                         } else {
                             console.log("Email or Password is not correct");
                             return null;

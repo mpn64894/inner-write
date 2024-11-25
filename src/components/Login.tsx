@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Nav from './Nav'
 import styles from './Login.module.css'
+import { doCredentialLogin } from '@/app/api/login/route'
 
 function LoginPage() {
   const [email, setEmail] = useState('')
@@ -13,25 +14,26 @@ function LoginPage() {
     e.preventDefault() // Prevent default form submission
 
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      })
+      // const response = await fetch('/api/login', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     email,
+      //     password,
+      //   }),
+      // })
 
+      const response = await doCredentialLogin(formData);
       if (!response.ok) {
         alert("Email or Password is incorrect")
       }
 
-      const { token } = await response.json()
-      if (token) {
-        document.cookie = `token=${token}; path=/`
-      }
+      // const { token } = await response.json()
+      // if (token) {
+      //   document.cookie = `token=${token}; path=/`
+      // }
       router.push('/authenticated/home')
     } catch (error) {
       console.error(error)
