@@ -7,7 +7,11 @@ import mongoose from 'mongoose';
             if (!uri) {
                 throw new Error("MONGODB_URI is not defined in environment variables.");
             }
-            await mongoose.connect(uri);
+            await mongoose.connect(uri, {
+                useNewUrlParser: true,
+                useUnifiedTopology: true,
+                dbName: "innerwrite",
+              });
             console.log("Connected to MongoDB.");
         
         } catch (error) {

@@ -11,10 +11,11 @@ function SignUp() {
     const [firstName, setfirstName] = useState('')
 
     const handleSignup = async (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
 
         if (password != confirmPassword) {
-            alert("Passwords don't match!")
+            alert("Passwords don't match!");
+            return;
         }
 
         try {
@@ -26,12 +27,12 @@ function SignUp() {
                 body: JSON.stringify({
                     firstName,
                     email,
-                    password
+                    password,
                 }),
-            })
-            if (!response.ok) throw new Error ('Sigup failed') 
+            });
+            if (!response.ok) throw new Error ('Signup failed') 
         } catch (error) {
-            console.error(error)
+            console.error('Error during signup!', error);
         }
     }
     return (
