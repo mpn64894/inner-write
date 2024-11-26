@@ -1,0 +1,13 @@
+
+
+function Reflect() {
+    useEffect(() => {
+    // Check for authentication cookie
+    const authToken = Cookies.get('token');
+    if (authToken) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+}
+
+export Reflect

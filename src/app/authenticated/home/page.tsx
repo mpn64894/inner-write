@@ -7,6 +7,7 @@ import Nav from '../../../components/Nav'
 import TaskBox from '@/components/TaskBox';
 import Dashboard from '@/components/Dashboard'
 import JournalEntry from '@/components/JournalEntry'
+import Reflect from '@/components/Reflect'
 
 function AuthHomePage() {
   const router = useRouter()
@@ -46,6 +47,7 @@ function AuthHomePage() {
         <Nav isAuthenticatedPage={true}/>
         <h1 style={{ textAlign: "center" }}>{formattedDate}</h1>
         <Dashboard/>
+        <Reflect/>
         <JournalEntry />
     </div>
     )

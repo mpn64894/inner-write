@@ -1,4 +1,3 @@
-// pages/api/signup.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
