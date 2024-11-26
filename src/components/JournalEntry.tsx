@@ -4,7 +4,6 @@ import styles from './JournalEntry.module.css';
 import Cookies from 'js-cookie';
 import { jwtDecode } from "jwt-decode";
 
-
 interface JournalEntryType {
     id?: string;
     user?: string;
@@ -84,7 +83,7 @@ const JournalEntry = () => {
             setTitle('');
             setContent('');
             setPrompt('');
-                setMoodString('');
+            setMoodString('');
         } catch (error) {
             console.error(error);
             alert('Something went wrong. Please try again.');

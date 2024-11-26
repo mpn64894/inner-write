@@ -1,5 +1,5 @@
 import connectMongoDB from "@/libs/mongodb";
-import JournalEntry from "@/models/journal-entry-schema";
+import TaskBox from "@/models/taskbox-schema";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
@@ -11,16 +11,16 @@ interface RouteParams {
 export async function GET(request:NextRequest, {params}: RouteParams) {
     const {id} = params;
     await connectMongoDB();
-    const entry = await JournalEntry.findOne({ _id: id});
+    const entry = await TaskBox.findOne({ _id: id});
     return NextResponse.json({entry}, {status: 200});
 }
 
 //update specific item
 export async function PUT(request:NextRequest,{params}: RouteParams ) {
     const { id } = await params;
-    const {title: title, content: content, prompt: prompt, moodString:moodString} = await request.json();
+    const {dateStart: dateStart, title: title, date: date, start: start, end: end, image: image, color: color, daysLeft: daysLeft} = await request.json();
     await connectMongoDB();
-    await JournalEntry.findByIdAndUpdate(id, {title, content, prompt, moodString});
+    await TaskBox.findByIdAndUpdate(id, {dateStart,title, date, start, end, image, color, daysLeft});
     return NextResponse.json({message: "Entry Updated"}, {status:200});
 }
 
@@ -31,7 +31,7 @@ export async function DELETE(request:NextRequest, {params}: RouteParams){
         return NextResponse.json({message: "Invalid ID format"}, {status : 400});
     }
     await connectMongoDB();
-    const deletedItem = await JournalEntry.findByIdAndDelete(id);
+    const deletedItem = await TaskBox.findByIdAndDelete(id);
     if (!deletedItem) {
         return NextResponse.json({ message: "Entry not found"}, {status:404});
     }
