@@ -91,14 +91,18 @@ function Reflect() {
   if (error) return <h1>Error: {error}</h1>;
 
   return (
-    <div>
+    <div className={styles.box}>
       <h1>Reflection</h1>
       {displayedJournal ? (
         <div>
-          <h2>Title: {displayedJournal.title}</h2> 
-          <p>{displayedJournal.content}</p> 
-          <p>{displayedJournal.prompt   }</p> 
-          <p>{displayedJournal.moodString   }</p>
+          <h2 className={styles.Title}>Title: {displayedJournal.title}</h2> 
+          <p className={styles.Content}>Content: {displayedJournal.content}</p> 
+          <p className={styles.Prompt}>Prompt: {displayedJournal.prompt   }</p> 
+            <img 
+                className={styles.img}
+                src={displayedJournal.moodString} 
+                alt={`Mood ${displayedJournal.moodString}`} 
+            />
         </div>
       ) : (
         <p>No journal entries found for you!</p>
