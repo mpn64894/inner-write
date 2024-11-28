@@ -116,8 +116,6 @@ function TodayPlan() {
         return;
     }
     const newEntry = { selectedHour, task: newTask, user: userId };
-    console.log(selectedHour);
-    console.log(newTask);
     try {
       const response = await fetch("/api/todaysplan", {
         method: "POST",

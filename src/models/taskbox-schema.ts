@@ -49,7 +49,7 @@ const taskBoxSchema: Schema = new Schema<ITaskBox> ({
     },
     color: {
         type: String,
-        required: true,
+        required: false,
         trim: true 
     },
     daysLeft: {
@@ -59,5 +59,5 @@ const taskBoxSchema: Schema = new Schema<ITaskBox> ({
     },
 });
 
-const TaskBox: Model<ITaskBox> = mongoose.models.TaskBox || mongoose.model<ITaskBox> ("TodaysPlan", taskBoxSchema);
+const TaskBox: Model<ITaskBox> = mongoose.models.TaskBox || mongoose.model<ITaskBox> ("TaskBox", taskBoxSchema);
 export default TaskBox;

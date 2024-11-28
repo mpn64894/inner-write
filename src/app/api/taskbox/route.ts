@@ -7,7 +7,9 @@ import { resolve } from "path";
 
 export async function POST(request: NextRequest){
 
-const { dateStart, title, date, start, end, image, color, daysLeft, user } = await request.json();
+  const { dateStart, title, date, start, end, image, color, daysLeft, user } = await request.json();
+  console.log('Incoming task data:', { dateStart, title, date, start, end, image, color, daysLeft, user });
+
   await connectMongoDB();
   // Check if user exists in database using email or user ID
   const userRecord = await User.findOne({ email: user }); // Assuming you pass email in the request
@@ -16,13 +18,12 @@ const { dateStart, title, date, start, end, image, color, daysLeft, user } = awa
   }
 
   const userId = userRecord._id;  // MongoDB ObjectId of user
-  
+  console.log("User Id: ", userId);
   
   
   // Create todays plan with MongoDB ObjectId
   await TaskBox.create({
-    user: userId, // This will store the actual ObjectId reference
-    dateStart,
+    user: userId, 
     title,
     date,
     start,
@@ -37,6 +38,9 @@ const { dateStart, title, date, start, end, image, color, daysLeft, user } = awa
 
 export async function GET() {
     await connectMongoDB();
-    const entries = await TaskBox.find();
-    return NextResponse.json({ entries });
-}
+    const tasks = await TaskBox.find();
+    if (Array.isArray(tasks) && tasks.length > 0) {
+      return NextResponse.json({ tasks });  // Return tasks in an object with the key 'tasks'
+    } else {
+      return NextResponse.json({ tasks: [] });  // If no tasks are found, return an empty array
+    }}

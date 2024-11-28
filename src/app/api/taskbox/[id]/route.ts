@@ -16,12 +16,37 @@ export async function GET(request:NextRequest, {params}: RouteParams) {
 }
 
 //update specific item
-export async function PUT(request:NextRequest,{params}: RouteParams ) {
+export async function PUT(request: NextRequest, {params}: RouteParams ) {
     const { id } = await params;
     const {dateStart: dateStart, title: title, date: date, start: start, end: end, image: image, color: color, daysLeft: daysLeft} = await request.json();
     await connectMongoDB();
     await TaskBox.findByIdAndUpdate(id, {dateStart,title, date, start, end, image, color, daysLeft});
     return NextResponse.json({message: "Entry Updated"}, {status:200});
+}
+
+// Edit task
+export async function PATCH(request: NextRequest, {params}: RouteParams) {
+    const { id } = params;  // Get task ID from URL params
+    const updatedData = await request.json();  // Get the updated task data from the request body
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return NextResponse.json({ message: "Invalid ID format" }, { status: 400 });
+    }
+
+    await connectMongoDB();
+
+    // Find and update the task by ID
+    const updatedTask = await TaskBox.findByIdAndUpdate(
+        id,
+        { $set: updatedData }, // Only update the fields that were provided
+        { new: true }  // Return the updated task
+    );
+
+    if (!updatedTask) {
+        return NextResponse.json({ message: "Task not found" }, { status: 404 });
+    }
+
+    return NextResponse.json(updatedTask, { status: 200 });
 }
 
 //delete item
