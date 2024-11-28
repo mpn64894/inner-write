@@ -26,8 +26,18 @@ function TodayPlan() {
     // Check for authentication cookie
     const authToken = Cookies.get('token');
     if (authToken) {
-      setIsAuthenticated(true);
-      fetchTasks();
+      try {
+        const decoded = jwtDecode(authToken);
+        if (decoded && decoded.exp > Date.now() / 1000) {
+          setIsAuthenticated(true);
+          fetchTasks(authToken);
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Invalid token", error);
+        setIsAuthenticated(false);
+      }
     }
   }, []);
 
@@ -59,10 +69,19 @@ function TodayPlan() {
   //   });
   // }
   
-  const fetchTasks = async () => {
+  const fetchTasks = async (authToken) => {
+    if (!isAuthenticated) {
+      console.warn("Attempted to fetch tasks while not authenticated.");
+      return;
+    }
     try {
-      const response = await fetch("/api/todaysplan"); // Replace with your endpoint
+      const token = Cookies.get('token');
+      const decoded = jwtDecode<{ userId: string }>(token as string);
+      const userId = decoded.userId;
+
+      const response = await fetch(`/api/todaysplan?user=${userId}`); // Replace with your endpoint
       if (!response.ok) throw new Error("Failed to fetch tasks");
+
       const data = await response.json();
       const tasks = data.entries.reduce((acc, entry) => {
         acc[entry.selectedHour] = entry.task; // Map tasks by their selected hour
@@ -82,6 +101,7 @@ function TodayPlan() {
     const token = Cookies.get('token'); 
     const decoded = jwtDecode<{ userId: string }>(token as string);
     const userId = decoded.userId;
+    
     if (!userId) {
         alert("User not authenticated.");
         return;
