@@ -26,11 +26,12 @@ function TodayPlan() {
     // Check for authentication cookie
     const authToken = Cookies.get('token');
     if (authToken) {
+      console.log('authorizing');
       try {
         const decoded = jwtDecode(authToken);
         if (decoded && decoded.exp > Date.now() / 1000) {
           setIsAuthenticated(true);
-          fetchTasks(authToken);
+          fetchTasks();
         } else {
           setIsAuthenticated(false);
         }
@@ -69,17 +70,25 @@ function TodayPlan() {
   //   });
   // }
   
-  const fetchTasks = async (authToken) => {
-    if (!isAuthenticated) {
+  const fetchTasks = async () => {
+    const authToken = Cookies.get('token'); 
+    if (!authToken) {
       console.warn("Attempted to fetch tasks while not authenticated.");
       return;
     }
+
     try {
-      const token = Cookies.get('token');
-      const decoded = jwtDecode<{ userId: string }>(token as string);
+      const decoded = jwtDecode(authToken);
       const userId = decoded.userId;
 
-      const response = await fetch(`/api/todaysplan?user=${userId}`); // Replace with your endpoint
+      console.log ("User from client side: ", userId);
+      const response = await fetch("/api/todaysplan", {
+        method: "GET",
+        headers: {
+          "Content-Type" : "application/json",
+          "User" : userId,
+        },
+      }); 
       if (!response.ok) throw new Error("Failed to fetch tasks");
 
       const data = await response.json();
@@ -133,9 +142,8 @@ function TodayPlan() {
 
   const deleteTask = async (hour: string) => {
     console.log("delete hour: " + hour)
-    const taskId = Object.entries(tasks).find(([key, value]) => key === hour)?.[1]?.id;
     try {
-      const response = await fetch(`/api/todaysplan${taskId}`, {
+      const response = await fetch(`/api/todaysplan/${hour}`, {
         method: "DELETE",
       });
       if (!response.ok) throw new Error("Failed to delete task");

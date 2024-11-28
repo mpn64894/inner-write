@@ -27,11 +27,13 @@ export async function PUT(request:NextRequest,{params}: RouteParams ) {
 //delete item
 export async function DELETE(request:NextRequest, {params}: RouteParams) {
     const { id } = await params;   
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return NextResponse.json({message: "Invalid ID format"}, {status : 400});
-    }
+    console.log("Hour: ", id);
+    // if (!mongoose.Types.ObjectId.isValid(id)) {
+    //     return NextResponse.json({message: "Invalid ID format"}, {status : 400});
+    // }
     await connectMongoDB();
-    const deletedItem = await TodaysPlan.findByIdAndDelete(id);
+    const task = await TodaysPlan.findOne({ selectedHour: id });
+    const deletedItem = await TodaysPlan.findOneAndDelete({ selectedHour: id });
     if (!deletedItem) {
         return NextResponse.json({ message: "Entry not found"}, {status:404});
     }

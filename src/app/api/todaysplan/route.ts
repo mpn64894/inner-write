@@ -10,7 +10,7 @@ export async function POST(request: NextRequest){
 const { selectedHour, task, user } = await request.json();
   await connectMongoDB();
   // Check if user exists in database using email or user ID
-  const userRecord = await User.findOne({ email: user }); // Assuming you pass email in the request
+  const userRecord = await User.findOne({ user: user }); // Assuming you pass email in the request
   if (!userRecord) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
@@ -27,8 +27,16 @@ const { selectedHour, task, user } = await request.json();
   return NextResponse.json({ message: "Entry added successfully!" }, { status: 201 }); 
 }
 
-export async function GET() {
-    await connectMongoDB();
-    const entries = await TodaysPlan.find();
-    return NextResponse.json({ entries });
+export async function GET(request: NextRequest) {
+  const user = await request.headers.get("User");
+
+  await connectMongoDB();
+
+  const userRecord = await User.findOne({ email: user });
+  if (!userRecord) {
+    return NextResponse.json({ message: "User not found" }, { status: 404 });
+  }
+  const userId = userRecord._id;
+  const entries = await TodaysPlan.find({ user: userId });
+  return NextResponse.json({ entries });
 }
