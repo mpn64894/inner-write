@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import TimeSlot from "./TimeSlot";
 import Cookies from 'js-cookie';
-
+import { jwtDecode } from "jwt-decode";
 
 const hours = [
   "12 AM", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM", "7 AM",
@@ -26,7 +26,19 @@ function TodayPlan() {
     // Check for authentication cookie
     const authToken = Cookies.get('token');
     if (authToken) {
-      setIsAuthenticated(true);
+      console.log('authorizing');
+      try {
+        const decoded = jwtDecode(authToken);
+        if (decoded && decoded.exp > Date.now() / 1000) {
+          setIsAuthenticated(true);
+          fetchTasks();
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Invalid token", error);
+        setIsAuthenticated(false);
+      }
     }
   }, []);
 
@@ -38,25 +50,112 @@ function TodayPlan() {
     setShowPopup(true); // Open the popup to add a task
   };
 
-  const handleAddTask = () => {
-    if (newTask.trim() !== "" && selectedHour) {
-      setTasks((prevTasks) => ({
-        ...prevTasks,
-        [selectedHour]: newTask
-      }));
-      setNewTask("");
-      setSelectedHour("");
-      setShowPopup(false);
+  // const handleAddTask = () => {
+  //   if (newTask.trim() !== "" && selectedHour) {
+  //     setTasks((prevTasks) => ({
+  //       ...prevTasks,
+  //       [selectedHour]: newTask
+  //     }));
+  //     setNewTask("");
+  //     setSelectedHour("");
+  //     setShowPopup(false);
+  //   }
+  // };
+
+  // const handleDelete = (id: string) => {
+  //   setTasks((prevTasks) => {
+  //     const updatedTasks = { ...prevTasks };
+  //     delete updatedTasks[id]; // Remove the task for the specific hour
+  //     return updatedTasks;
+  //   });
+  // }
+  
+  const fetchTasks = async () => {
+    const authToken = Cookies.get('token'); 
+    if (!authToken) {
+      console.warn("Attempted to fetch tasks while not authenticated.");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(authToken);
+      const userId = decoded.userId;
+
+      console.log ("User from client side: ", userId);
+      const response = await fetch("/api/todaysplan", {
+        method: "GET",
+        headers: {
+          "Content-Type" : "application/json",
+          "User" : userId,
+        },
+      }); 
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+
+      const data = await response.json();
+      const tasks = data.entries.reduce((acc, entry) => {
+        acc[entry.selectedHour] = entry.task; // Map tasks by their selected hour
+        return acc;
+      }, {});
+      setTasks(tasks); // Assuming the response is an object with { [hour]: task }
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
     }
   };
 
-  const handleDelete = (id: string) => {
-    setTasks((prevTasks) => {
-      const updatedTasks = { ...prevTasks };
-      delete updatedTasks[id]; // Remove the task for the specific hour
-      return updatedTasks;
-    });
-  }
+  const addTask = async () => {
+    if (newTask.trim() === "" || !selectedHour) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    const token = Cookies.get('token'); 
+    const decoded = jwtDecode<{ userId: string }>(token as string);
+    const userId = decoded.userId;
+    
+    if (!userId) {
+        alert("User not authenticated.");
+        return;
+    }
+    const newEntry = { selectedHour, task: newTask, user: userId };
+    try {
+      const response = await fetch("/api/todaysplan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newEntry),
+      });
+      if (!response.ok) throw new Error("Failed to add task");
+
+      setTasks((prevTasks) => ({
+        ...prevTasks,
+        [selectedHour]: newTask,
+      }));
+      setNewTask(" ");
+      setSelectedHour(" ");
+      setShowPopup(false);
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
+  };
+
+  const deleteTask = async (hour: string) => {
+    console.log("delete hour: " + hour)
+    try {
+      const response = await fetch(`/api/todaysplan/${hour}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete task");
+
+      // Update local state after successful deletion
+      setTasks((prevTasks) => {
+        const updatedTasks = { ...prevTasks };
+        delete updatedTasks[hour];
+        return updatedTasks;
+      });
+    } catch (error) {
+      console.error("Error deleting task:", error);
+    }
+  };
 
   return (
     <div className={styles.todayPlan}>
@@ -85,7 +184,7 @@ function TodayPlan() {
             id = {hour}
             time={hour}
             task={tasks[hour]}
-            onDelete={handleDelete}
+            onDelete={deleteTask}
           />
         ))}
       </div>
@@ -115,7 +214,7 @@ function TodayPlan() {
             placeholder="Enter task description"
           />
 
-          <button onClick={handleAddTask}>Add Task</button>
+          <button onClick={addTask}>Add Task</button>
           <button onClick={() => setShowPopup(false)}>Cancel</button>
         </div>
       )}

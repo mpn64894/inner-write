@@ -3,6 +3,7 @@ import styles from './TaskBox.module.css';
 import { IoIosAddCircle } from 'react-icons/io';
 import { useEffect } from "react";
 import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";
 
 type TaskType = {
   id: number;
@@ -67,16 +68,71 @@ const TaskBox = () => {
     // Check for authentication cookie
     const authToken = Cookies.get('token');
     if (authToken) {
-      setIsAuthenticated(true);
+      console.log('authorizing');
+      try {
+        const decoded = jwtDecode(authToken);
+        if (decoded && decoded.exp > Date.now() / 1000) {
+          setIsAuthenticated(true);
+          fetchTasks();
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Invalid token", error);
+        setIsAuthenticated(false);
+      }
     }
   }, []);
 
-  const addTask = () => {
+  const fetchTasks = async () => {
+    const authToken = Cookies.get('token'); 
+    if (!authToken) {
+      console.warn("Attempted to fetch tasks while not authenticated.");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(authToken);
+      const userId = decoded.userId;
+
+      const response = await fetch("/api/taskbox", {
+        method: "GET",
+        headers: {
+          "Content-Type" : "application/json",
+          "User" : userId,
+        },
+      }); 
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+
+      const data = await response.json();
+      // const tasks = data.entries.reduce((acc, entry) => {
+      //   acc[entry] = entry.task; // Map tasks by their selected hour
+      //   return acc;
+      // }, {});
+      if (data.tasks && Array.isArray(data.tasks)) {
+        setTasks(data.tasks);
+      } else {
+        console.error('Invalid data format:', data);
+      }    
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
+  const addTask = async () => {
     if (newTask.trim() && taskDate && startTime && imageURL.trim()) {
       if (!isDateTimeValid() || !isEndTimeAfterStartTime()) return;
+      const token = Cookies.get('token'); 
+      const decoded = jwtDecode<{ userId: string }>(token as string);
+      const userId = decoded.userId;
+
+      if (!userId) {
+        alert("User not authenticated.");
+        return;
+      }
 
       const task = {
-        id: Date.now(),
+        dateStart: Date.now(),
         title: newTask,
         date: taskDate,
         start: startTime,
@@ -84,27 +140,75 @@ const TaskBox = () => {
         image: imageURL,
         color: selectedColor,
         daysLeft: calculateDaysLeft(taskDate),
+        user: userId,
       };
+      console.log("task: ", task);
 
-      setTasks((prevTasks) =>
-        [...prevTasks, task].sort((a, b) =>
-          new Date(`${a.date} ${a.start}`).getTime() - new Date(`${b.date} ${b.start}`).getTime()
-        )
-      );
-
-      // Reset input fields and close popup
-      setNewTask("");
-      setTaskDate("");
-      setStartTime("");
-      setEndTime("");
-      setImageURL("");
+      try {
+        const response = await fetch('/api/taskbox', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify(task),
+      });
+      if (!response.ok) throw new Error("Failed to add task");
+      // const newTask = await response.json();
+      // setTasks((prevTasks) => [...prevTasks, newTask]);
+      fetchTasks();  // this will update the tasks from the server
+      setNewTask('');
+      setTaskDate('');
+      setStartTime(''); 
+      setEndTime('');
+      setImageURL('');
       setShowPopup(false);
+    } catch (error) {
+      console.error('Failed to add task');
     }
-    else {
+  } else {
       setError("All fields are required.");
       setShowErrorPopup(true);
+  }
+};
+
+// const deleteTask = async () => {
+//   if (selectedTask) {
+//     setTasks((prevTasks) => prevTasks.filter(task => task.id !== selectedTask.id));
+//     setShowEditPopup(false);
+//     setSelectedTask(null);
+//   }
+// };
+
+const deleteTask = async () => {
+  if (selectedTask) {
+    console.log("taskid: ", selectedTask);
+    const taskId = selectedTask._id;  // Use _id for MongoDB ObjectId
+    try {
+      // Send a DELETE request to the backend
+      const response = await fetch(`/api/taskbox/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Successfully deleted, update the tasks state
+        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+        setShowEditPopup(false);
+        setSelectedTask(null);
+      } else {
+        const data = await response.json();
+        console.error('Failed to delete task:', data.message);
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
     }
-  };
+  } else {
+    console.warn('No task selected to delete');
+  }
+};
+
 
   const handleTaskClick = (task: TaskType) => {
     setSelectedTask(task); 
@@ -117,22 +221,70 @@ const TaskBox = () => {
     setShowEditPopup(true); // Open the edit popup
   };
 
-  const saveEditedTask = () => {
+  // const saveEditedTask = () => {
+  //   if (!selectedTask || !isDateTimeValid() || !isEndTimeAfterStartTime()) return;
+  
+  //   console.log(selectedTask)
+
+  //   setTasks((prevTasks) =>
+  //     prevTasks.map((task) =>
+  //       task.id === selectedTask.id
+  //         ? { ...task, title: newTask, date: taskDate, start: startTime, end: endTime, color: selectedColor }
+  //         : task
+  //     )
+  //   );
+
+  //   handleCloseEditPopup();
+  // };
+
+
+  const saveEditedTask = async () => {
     if (!selectedTask || !isDateTimeValid() || !isEndTimeAfterStartTime()) return;
   
-    console.log(selectedTask)
-
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === selectedTask.id
-          ? { ...task, title: newTask, date: taskDate, start: startTime, end: endTime, color: selectedColor }
-          : task
-      )
-    );
-
-    handleCloseEditPopup();
+    const updatedTask = {
+      title: newTask,
+      date: taskDate,
+      start: startTime,
+      end: endTime,
+      color: selectedColor,
+    };
+  
+    console.log('Updated Task:', updatedTask);
+  
+    // Send a PATCH request to update the task in the backend
+    try {
+      const response = await fetch(`/api/taskbox/${selectedTask._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedTask),
+      });
+  
+      if (response.ok) {
+        const updatedTaskData = await response.json();
+        console.log('Task updated:', updatedTaskData);
+  
+        // Update the task list in the state
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task._id === selectedTask._id
+              ? { ...task, ...updatedTask }  // Merge updated task data
+              : task
+          )
+        );
+  
+        // Close the edit popup
+        handleCloseEditPopup();
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to update task:', errorData.message);
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
   };
-
+  
   const handleCloseEditPopup = () => {
     setShowEditPopup(false);
     setSelectedTask(null); 
@@ -144,13 +296,6 @@ const TaskBox = () => {
     setSelectedColor("#cccccc");
   };
 
-  const deleteTask = () => {
-    if (selectedTask) {
-      setTasks((prevTasks) => prevTasks.filter(task => task.id !== selectedTask.id));
-      setShowEditPopup(false);
-      setSelectedTask(null);
-    }
-  };
 
   const calculateDaysLeft = (date: string) => {
     const taskDate = new Date(date);
@@ -195,11 +340,19 @@ const TaskBox = () => {
     return true;
   };
 
-  const formatDate = (dateStr = "") => {
-    const [year, month, day] = dateStr.split('-');
-    return `${month}/${day}/${year}`;
+  // const formatDate = (dateStr = "") => {
+  //   const [year, month, day] = dateStr.split('-');
+  //   return `${month}/${day}/${year}`;
+  // };
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+    //  weekday: 'long', // e.g., "Monday"
+      year: 'numeric', // e.g., "2024"
+      month: 'numeric', // e.g., "November"
+      day: 'numeric', // e.g., "27"
+    });
   };
-
+  
   const formatTime = (time = "") => {
     return new Date(`1970-01-01T${time}`).toLocaleTimeString([], {
       hour: '2-digit',
@@ -391,8 +544,8 @@ const TaskBox = () => {
 
       {/* Task Cards */}
       <div className={styles.taskCard}>
-        {tasks.map((task) => (
-          <div key={task.id} className={styles.taskItem} style={{ borderColor: task.color }} 
+        {tasks.map((task, index) => (
+          <div key={task.id || index} className={styles.taskItem} style={{ borderColor: task.color }} 
             onClick={() => isAuthenticated ? handleTaskClick(task) : undefined}>
             {task.image && <img src={task.image} alt="Task" className={styles.taskImage} />}
             <h3>{task.title}</h3>
