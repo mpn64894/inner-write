@@ -1,4 +1,3 @@
-// pages/api/signup.ts
 import { NextApiRequest, NextApiResponse } from 'next';
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
@@ -27,13 +26,14 @@ export async function POST(request: Request) {
     }
   
    
-    
+    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
+
   
     // Create a new user
     const newUser = new User({
       firstName,
       email,
-      password,
+      password: hashedPassword,
     });
   
     // Save the user to the database

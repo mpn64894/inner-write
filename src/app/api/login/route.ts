@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import 'dotenv/config'
 import { time } from 'console';
 import User from '@/models/user-schema';
-
+import bcrypt from 'bcryptjs';
 // authenticate with mongodb and hceck if user in db
 
 export async function authenticateUser(email: string, password: string) {
@@ -13,8 +13,10 @@ export async function authenticateUser(email: string, password: string) {
     return null; // No user found
   }
 
-  if (email === user.email && password === user.password ) {
-    return {userId: user.email};
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+
+  if (isPasswordValid) {
+    return { userId: user.email }; // Return userId if the password is valid
   }
   return null;
 }

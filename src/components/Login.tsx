@@ -32,7 +32,6 @@ function LoginPage() {
       if (token) {
         document.cookie = `token=${token}; path=/`
       }
-      router.push('/authenticated/home')
     } catch (error) {
       console.error(error)
     }
