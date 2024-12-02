@@ -2,6 +2,7 @@ import styles from "./Reflect.module.css";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken"; // If you need to decode the JWT to get the userId
+import { useRouter } from 'next/navigation';
 
 function Reflect() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -9,6 +10,8 @@ function Reflect() {
   const [error, setError] = useState<string | null>(null);
   const [journals, setJournals] = useState<any[]>([]); // State to store journal entries
   const [displayedJournal, setDisplayedJournal] = useState<any | null>(null); // State for the journal to display
+  const router = useRouter(); // Use Next.js router
+
 
   useEffect(() => {
     // Check for authentication cookie
@@ -90,11 +93,19 @@ function Reflect() {
   if (loading) return <h1>Loading...</h1>;
   if (error) return <h1>Error: {error}</h1>;
 
+  const loadAllEntriesClick = () => {
+    router.push('/all-journals');
+  };
+
+
   return (
     <div className={styles.box}>
       <h1>Reflection</h1>
       {displayedJournal ? (
         <div>
+          <button className={styles.button} onClick={loadAllEntriesClick}>
+            View All Entries
+          </button>
           <h2 className={styles.Title}>Title: {displayedJournal.title}</h2> 
           <p className={styles.Content}>Content: {displayedJournal.content}</p> 
           <p className={styles.Prompt}>Prompt: {displayedJournal.prompt   }</p> 
