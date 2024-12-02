@@ -26,6 +26,8 @@ function LoginPage() {
 
       if (!response.ok) {
         alert("Email or Password is incorrect")
+      } else {
+        router.push('authenticated/home')
       }
 
       const { token } = await response.json()
