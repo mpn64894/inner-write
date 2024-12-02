@@ -9,6 +9,33 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+.titleContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; 
+  width: 100%; 
+}
+
+.titleContainer h3 {
+  margin: 0;
+  flex-grow: 1; 
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #333;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; 
+}
+
+.checkboxContainer {
+  margin-left: auto; 
+}
+
+.checkboxContainer input[type="checkbox"] {
+  cursor: pointer; 
+  transform: scale(1.2); 
+}
+
 .upcommingEvents {
   font-size: 1.8em;
   font-weight: bold;
@@ -61,6 +88,27 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  transition: all 0.3s ease-in-out; 
+}
+
+.taskItem.completed {
+  background-color: #f5f5f5; 
+  color: #a0a0a0; 
+  opacity: 0.8;
+}
+
+.taskItem.completed h3,
+.taskItem.completed p {
+  text-decoration: line-through;
+}
+
+.taskItem.completed img {
+  filter: grayscale(100%);
+}
+
+.checkboxContainer input[type="checkbox"] {
+  cursor: pointer;
+  transform: scale(1.2);
 }
 
 .taskItem:hover {
