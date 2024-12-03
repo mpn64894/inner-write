@@ -82,21 +82,36 @@ function TodayPlan() {
       const userId = decoded.userId;
 
       console.log ("User from client side: ", userId);
-      const response = await fetch("/api/todaysplan", {
+      const response = await fetch(`/api/todaysplan`, {
         method: "GET",
         headers: {
           "Content-Type" : "application/json",
-          "User" : userId,
+          Authorization: `Bearer ${authToken}`, 
         },
       }); 
+
+      const userResponse = await fetch(`/api/todaysplan/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`, 
+        },
+      });
+
       if (!response.ok) throw new Error("Failed to fetch tasks");
 
       const data = await response.json();
+      const userData = await userResponse.json();
+      const userDataId = userData.userId;
+      // console.log(userDataId);
+      // console.log(data)
+      // const entries = Array.isArray(data.entries) ? data.entries : [];
+      // const filteredData = entries.filter((entry) => entry.user === userDataId);
       const filteredData = data.entries?.filter(
-        (entry: any) => entry.user === userId
+        (entry: any) => entry.user === userDataId
       ) || [];
 
-      const tasks = filteredData.entries.reduce((acc, entry) => {
+      const tasks = filteredData.reduce((acc, entry) => {
         acc[entry.selectedHour] = entry.task; // Map tasks by their selected hour
         return acc;
       }, {});

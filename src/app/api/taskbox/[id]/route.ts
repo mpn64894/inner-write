@@ -3,16 +3,19 @@ import TaskBox from "@/models/taskbox-schema";
 import { NextResponse } from "next/server";
 import { NextRequest } from "next/server";
 import mongoose from "mongoose";
+import User, { IUser } from "@/models/user-schema";
+import jwt from "jsonwebtoken";
 
 interface RouteParams {
     params: {id: string};
 }
 
 export async function GET(request:NextRequest, {params}: RouteParams) {
-    const {id} = params;
+    const {id} = await params;
     await connectMongoDB();
-    const entry = await TaskBox.findOne({ _id: id});
-    return NextResponse.json({entry}, {status: 200});
+    const user = await User.findOne({ email: id}) as IUser;
+    const userId = user._id;
+    return NextResponse.json({userId}, {status: 200});
 }
 
 //update specific item
