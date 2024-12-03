@@ -16,41 +16,41 @@ type TaskType = {
   daysLeft: number;
 };
 
-const dummyTasks: TaskType[] = [
-  {
-    id: 1,
-    title: "Coffee with sister",
-    date: "2024-11-15",
-    start: "07:00",
-    end: "08:00",
-    image: "https://cdn.vox-cdn.com/thumbor/X6SXIp7SNGuXE6IRcCZuVu8m3J0=/0x0:3072x4080/1200x900/filters:focal(1143x2660:1633x3150):no_upscale()/cdn.vox-cdn.com/uploads/chorus_image/image/71633539/PXL_20220830_183956022.PORTRAIT.0.jpg",
-    color: "yellow",
-    daysLeft: 4,
-  },
-  {
-    id: 2,
-    title: "Test",
-    date: "2024-11-18",
-    start: "11:00",
-    end: "12:00",
-    image: "https://www.verywellmind.com/thmb/Z5c1MgXTWvzGZtvh3l-qZNRn0qo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-172163714-56910a493df78cafda818537.jpg",
-    color: "red",
-    daysLeft: 7,
-  },
-  {
-    id: 3,
-    title: "Fair",
-    date: "2024-11-23",
-    start: "21:00",
-    end: "23:00",
-    image: "https://www.orangecountyfair.com/images/site/rides/D1B3EE71-95DC-4709-BC05-CD7AB556B701.44384.6965046296-G.jpg",
-    color: "gray",
-    daysLeft: 12,
-  }
-];
+// const dummyTasks: TaskType[] = [
+//   {
+//     id: 1,
+//     title: "Coffee with sister",
+//     date: "2024-11-15",
+//     start: "07:00",
+//     end: "08:00",
+//     image: "https://cdn.vox-cdn.com/thumbor/X6SXIp7SNGuXE6IRcCZuVu8m3J0=/0x0:3072x4080/1200x900/filters:focal(1143x2660:1633x3150):no_upscale()/cdn.vox-cdn.com/uploads/chorus_image/image/71633539/PXL_20220830_183956022.PORTRAIT.0.jpg",
+//     color: "yellow",
+//     daysLeft: 4,
+//   },
+//   {
+//     id: 2,
+//     title: "Test",
+//     date: "2024-11-18",
+//     start: "11:00",
+//     end: "12:00",
+//     image: "https://www.verywellmind.com/thmb/Z5c1MgXTWvzGZtvh3l-qZNRn0qo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-172163714-56910a493df78cafda818537.jpg",
+//     color: "red",
+//     daysLeft: 7,
+//   },
+//   {
+//     id: 3,
+//     title: "Fair",
+//     date: "2024-11-23",
+//     start: "21:00",
+//     end: "23:00",
+//     image: "https://www.orangecountyfair.com/images/site/rides/D1B3EE71-95DC-4709-BC05-CD7AB556B701.44384.6965046296-G.jpg",
+//     color: "gray",
+//     daysLeft: 12,
+//   }
+// ];
 
 const TaskBox = () => {
-  const [tasks, setTasks] = useState<TaskType[]>(dummyTasks);
+  const [tasks, setTasks] = useState<TaskType[]>([]);
   const [showPopup, setShowPopup] = useState(false); // create popup
   const [newTask, setNewTask] = useState("");
   const [taskDate, setTaskDate] = useState("");
