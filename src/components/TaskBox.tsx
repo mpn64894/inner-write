@@ -109,10 +109,15 @@ const TaskBox = () => {
       //   acc[entry] = entry.task; // Map tasks by their selected hour
       //   return acc;
       // }, {});
-      if (data.tasks && Array.isArray(data.tasks)) {
-        setTasks(data.tasks);
+      const filteredData = data.entries?.filter(
+        (entry: any) => entry.user === userId
+      ) || [];
+
+      
+      if (filteredData.tasks && Array.isArray(filteredData.tasks)) {
+        setTasks(filteredData.tasks);
       } else {
-        console.error('Invalid data format:', data);
+        console.error('Invalid data format:', filteredData);
       }    
     } catch (error) {
       console.error("Error fetching tasks:", error);
