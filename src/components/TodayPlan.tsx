@@ -92,7 +92,11 @@ function TodayPlan() {
       if (!response.ok) throw new Error("Failed to fetch tasks");
 
       const data = await response.json();
-      const tasks = data.entries.reduce((acc, entry) => {
+      const filteredData = data.entries?.filter(
+        (entry: any) => entry.user === userId
+      ) || [];
+
+      const tasks = filteredData.entries.reduce((acc, entry) => {
         acc[entry.selectedHour] = entry.task; // Map tasks by their selected hour
         return acc;
       }, {});
