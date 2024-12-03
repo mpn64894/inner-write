@@ -39,8 +39,10 @@ export async function POST(request: NextRequest){
 export async function GET() {
     await connectMongoDB();
     const tasks = await TaskBox.find();
-    if (Array.isArray(tasks) && tasks.length > 0) {
-      return NextResponse.json({ tasks });  // Return tasks in an object with the key 'tasks'
-    } else {
-      return NextResponse.json({ tasks: [] });  // If no tasks are found, return an empty array
-    }}
+    return NextResponse.json({ tasks }); 
+    // if (Array.isArray(tasks) && tasks.length > 0) {
+    //   return NextResponse.json({ tasks });  // Return tasks in an object with the key 'tasks'
+    // } else {
+    //   return NextResponse.json({ tasks: [] });  // If no tasks are found, return an empty array
+    // }
+  }

@@ -95,30 +95,47 @@ const TaskBox = () => {
       const decoded = jwtDecode(authToken);
       const userId = decoded.userId;
 
-      const response = await fetch("/api/taskbox", {
+      const response = await fetch(`/api/taskbox`, {
         method: "GET",
         headers: {
           "Content-Type" : "application/json",
-          "User" : userId,
+          Authorization: `Bearer ${authToken}`, 
         },
       }); 
+
+      const userResponse = await fetch(`/api/taskbox/${userId}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`, 
+        },
+      });
+
       if (!response.ok) throw new Error("Failed to fetch tasks");
 
       const data = await response.json();
+      const userData = await userResponse.json();
+      const userDataId = userData.userId;
       // const tasks = data.entries.reduce((acc, entry) => {
       //   acc[entry] = entry.task; // Map tasks by their selected hour
       //   return acc;
       // }, {});
-      const filteredData = data.entries?.filter(
-        (entry: any) => entry.user === userId
-      ) || [];
-
-      
-      if (filteredData.tasks && Array.isArray(filteredData.tasks)) {
-        setTasks(filteredData.tasks);
+      console.log("Data", data);
+      console.log(userDataId);
+      const filteredData = data.tasks?.filter((entry: any) => entry.user === userDataId) || [];
+      console.log("Filtered data", filteredData);
+      if (filteredData.length > 0 ) {
+        setTasks(filteredData);
       } else {
         console.error('Invalid data format:', filteredData);
-      }    
+      } 
+
+      
+      // if (Array.isArray(filteredData)) {
+      //   setTasks(filteredData);
+      // } else {
+      //   console.error('Invalid data format:', filteredData);
+      // }    
     } catch (error) {
       console.error("Error fetching tasks:", error);
     }

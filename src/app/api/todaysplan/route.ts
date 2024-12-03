@@ -28,15 +28,15 @@ const { selectedHour, task, user } = await request.json();
 }
 
 export async function GET(request: NextRequest) {
-  const user = await request.headers.get("User");
+//  const user = await request.headers.get("User");
 
   await connectMongoDB();
 
-  const userRecord = await User.findOne({ email: user });
-  if (!userRecord) {
-    return NextResponse.json({ message: "User not found" }, { status: 404 });
-  }
-  const userId = userRecord._id;
-  const entries = await TodaysPlan.find({ user: userId });
+ // const userRecord = await User.findOne({ email: user });
+  // if (!userRecord) {
+  //   return NextResponse.json({ message: "User not found" }, { status: 404 });
+  // }
+
+  const entries = await TodaysPlan.find();
   return NextResponse.json({ entries });
 }
