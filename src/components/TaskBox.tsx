@@ -3,6 +3,7 @@ import styles from './TaskBox.module.css';
 import { IoIosAddCircle } from 'react-icons/io';
 import { useEffect } from "react";
 import Cookies from 'js-cookie';
+import { jwtDecode } from "jwt-decode";
 
 type TaskType = {
   id: number;
@@ -13,7 +14,6 @@ type TaskType = {
   image: string;
   color: string;
   daysLeft: number;
-  completed: boolean;
 };
 
 const dummyTasks: TaskType[] = [
@@ -26,7 +26,6 @@ const dummyTasks: TaskType[] = [
     image: "https://cdn.vox-cdn.com/thumbor/X6SXIp7SNGuXE6IRcCZuVu8m3J0=/0x0:3072x4080/1200x900/filters:focal(1143x2660:1633x3150):no_upscale()/cdn.vox-cdn.com/uploads/chorus_image/image/71633539/PXL_20220830_183956022.PORTRAIT.0.jpg",
     color: "yellow",
     daysLeft: 4,
-    completed: false,
   },
   {
     id: 2,
@@ -37,7 +36,6 @@ const dummyTasks: TaskType[] = [
     image: "https://www.verywellmind.com/thmb/Z5c1MgXTWvzGZtvh3l-qZNRn0qo=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/GettyImages-172163714-56910a493df78cafda818537.jpg",
     color: "red",
     daysLeft: 7,
-    completed: false,
   },
   {
     id: 3,
@@ -48,7 +46,6 @@ const dummyTasks: TaskType[] = [
     image: "https://www.orangecountyfair.com/images/site/rides/D1B3EE71-95DC-4709-BC05-CD7AB556B701.44384.6965046296-G.jpg",
     color: "gray",
     daysLeft: 12,
-    completed: false,
   }
 ];
 
@@ -66,22 +63,76 @@ const TaskBox = () => {
   const [selectedColor, setSelectedColor] = useState("#cccccc"); // default color
   const [selectedTask, setSelectedTask] = useState<TaskType | null>(null); // type selectedTask
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isCompleted, setIsCompleted] = useState(false);
 
   useEffect(() => {
     // Check for authentication cookie
     const authToken = Cookies.get('token');
     if (authToken) {
-      setIsAuthenticated(true);
+      console.log('authorizing');
+      try {
+        const decoded = jwtDecode(authToken);
+        if (decoded && decoded.exp > Date.now() / 1000) {
+          setIsAuthenticated(true);
+          fetchTasks();
+        } else {
+          setIsAuthenticated(false);
+        }
+      } catch (error) {
+        console.error("Invalid token", error);
+        setIsAuthenticated(false);
+      }
     }
   }, []);
 
-  const addTask = () => {
+  const fetchTasks = async () => {
+    const authToken = Cookies.get('token'); 
+    if (!authToken) {
+      console.warn("Attempted to fetch tasks while not authenticated.");
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(authToken);
+      const userId = decoded.userId;
+
+      const response = await fetch("/api/taskbox", {
+        method: "GET",
+        headers: {
+          "Content-Type" : "application/json",
+          "User" : userId,
+        },
+      }); 
+      if (!response.ok) throw new Error("Failed to fetch tasks");
+
+      const data = await response.json();
+      // const tasks = data.entries.reduce((acc, entry) => {
+      //   acc[entry] = entry.task; // Map tasks by their selected hour
+      //   return acc;
+      // }, {});
+      if (data.tasks && Array.isArray(data.tasks)) {
+        setTasks(data.tasks);
+      } else {
+        console.error('Invalid data format:', data);
+      }    
+    } catch (error) {
+      console.error("Error fetching tasks:", error);
+    }
+  };
+
+  const addTask = async () => {
     if (newTask.trim() && taskDate && startTime && imageURL.trim()) {
       if (!isDateTimeValid() || !isEndTimeAfterStartTime()) return;
+      const token = Cookies.get('token'); 
+      const decoded = jwtDecode<{ userId: string }>(token as string);
+      const userId = decoded.userId;
+
+      if (!userId) {
+        alert("User not authenticated.");
+        return;
+      }
 
       const task = {
-        id: Date.now(),
+        dateStart: Date.now(),
         title: newTask,
         date: taskDate,
         start: startTime,
@@ -89,67 +140,151 @@ const TaskBox = () => {
         image: imageURL,
         color: selectedColor,
         daysLeft: calculateDaysLeft(taskDate),
-        completed: false,
+        user: userId,
       };
+      console.log("task: ", task);
 
-      setTasks((prevTasks) =>
-        [...prevTasks, task].sort((a, b) =>
-          new Date(`${a.date} ${a.start}`).getTime() - new Date(`${b.date} ${b.start}`).getTime()
-        )
-      );
-
-      // Reset input fields and close popup
-      setNewTask("");
-      setTaskDate("");
-      setStartTime("");
-      setEndTime("");
-      setImageURL("");
+      try {
+        const response = await fetch('/api/taskbox', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify(task),
+      });
+      if (!response.ok) throw new Error("Failed to add task");
+      // const newTask = await response.json();
+      // setTasks((prevTasks) => [...prevTasks, newTask]);
+      fetchTasks();  // this will update the tasks from the server
+      setNewTask('');
+      setTaskDate('');
+      setStartTime(''); 
+      setEndTime('');
+      setImageURL('');
       setShowPopup(false);
+    } catch (error) {
+      console.error('Failed to add task');
     }
-    else {
+  } else {
       setError("All fields are required.");
       setShowErrorPopup(true);
+  }
+};
+
+// const deleteTask = async () => {
+//   if (selectedTask) {
+//     setTasks((prevTasks) => prevTasks.filter(task => task.id !== selectedTask.id));
+//     setShowEditPopup(false);
+//     setSelectedTask(null);
+//   }
+// };
+
+const deleteTask = async () => {
+  if (selectedTask) {
+    console.log("taskid: ", selectedTask);
+    const taskId = selectedTask._id;  // Use _id for MongoDB ObjectId
+    try {
+      // Send a DELETE request to the backend
+      const response = await fetch(`/api/taskbox/${taskId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        // Successfully deleted, update the tasks state
+        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+        setShowEditPopup(false);
+        setSelectedTask(null);
+      } else {
+        const data = await response.json();
+        console.error('Failed to delete task:', data.message);
+      }
+    } catch (error) {
+      console.error('Error deleting task:', error);
     }
-  };
+  } else {
+    console.warn('No task selected to delete');
+  }
+};
+
 
   const handleTaskClick = (task: TaskType) => {
-    setSelectedTask(task);
+    setSelectedTask(task); 
     setNewTask(task.title);
     setTaskDate(task.date);
     setStartTime(task.start);
     setEndTime(task.end);
     setImageURL(task.image);
     setSelectedColor(task.color);
-    setIsCompleted(task.completed);
-    setShowEditPopup(true);
-  };  
-
-  const saveEditedTask = () => {
-    if (!selectedTask || !isDateTimeValid() || !isEndTimeAfterStartTime()) return;
-  
-    console.log(selectedTask)
-
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === selectedTask.id
-          ? {
-              ...task,
-              title: newTask,
-              date: taskDate,
-              start: startTime,
-              end: endTime,
-              color: selectedColor,
-              image: imageURL,
-              daysLeft: calculateDaysLeft(taskDate),
-              completed: task.completed,
-            }
-          : task
-      )
-    );
-
-    handleCloseEditPopup();
+    setShowEditPopup(true); // Open the edit popup
   };
 
+  // const saveEditedTask = () => {
+  //   if (!selectedTask || !isDateTimeValid() || !isEndTimeAfterStartTime()) return;
+  
+  //   console.log(selectedTask)
+
+  //   setTasks((prevTasks) =>
+  //     prevTasks.map((task) =>
+  //       task.id === selectedTask.id
+  //         ? { ...task, title: newTask, date: taskDate, start: startTime, end: endTime, color: selectedColor }
+  //         : task
+  //     )
+  //   );
+
+  //   handleCloseEditPopup();
+  // };
+
+
+  const saveEditedTask = async () => {
+    if (!selectedTask || !isDateTimeValid() || !isEndTimeAfterStartTime()) return;
+  
+    const updatedTask = {
+      title: newTask,
+      date: taskDate,
+      start: startTime,
+      end: endTime,
+      color: selectedColor,
+    };
+  
+    console.log('Updated Task:', updatedTask);
+  
+    // Send a PATCH request to update the task in the backend
+    try {
+      const response = await fetch(`/api/taskbox/${selectedTask._id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedTask),
+      });
+  
+      if (response.ok) {
+        const updatedTaskData = await response.json();
+        console.log('Task updated:', updatedTaskData);
+  
+        // Update the task list in the state
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task._id === selectedTask._id
+              ? { ...task, ...updatedTask }  // Merge updated task data
+              : task
+          )
+        );
+  
+        // Close the edit popup
+        handleCloseEditPopup();
+      } else {
+        const errorData = await response.json();
+        console.error('Failed to update task:', errorData.message);
+      }
+    } catch (error) {
+      console.error('Error updating task:', error);
+    }
+  };
+  
   const handleCloseEditPopup = () => {
     setShowEditPopup(false);
     setSelectedTask(null); 
@@ -159,16 +294,8 @@ const TaskBox = () => {
     setEndTime(""); 
     setImageURL("");
     setSelectedColor("#cccccc");
-    setIsCompleted(false);
   };
 
-  const deleteTask = () => {
-    if (selectedTask) {
-      setTasks((prevTasks) => prevTasks.filter(task => task.id !== selectedTask.id));
-      setShowEditPopup(false);
-      setSelectedTask(null);
-    }
-  };
 
   const calculateDaysLeft = (date: string) => {
     const taskDate = new Date(date);
@@ -213,19 +340,19 @@ const TaskBox = () => {
     return true;
   };
 
-  const toggleCompleted = (taskId: number) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
-  };  
-
-  const formatDate = (dateStr = "") => {
-    const [year, month, day] = dateStr.split('-');
-    return `${month}/${day}/${year}`;
+  // const formatDate = (dateStr = "") => {
+  //   const [year, month, day] = dateStr.split('-');
+  //   return `${month}/${day}/${year}`;
+  // };
+  const formatDate = (date) => {
+    return new Date(date).toLocaleDateString('en-US', {
+    //  weekday: 'long', // e.g., "Monday"
+      year: 'numeric', // e.g., "2024"
+      month: 'numeric', // e.g., "November"
+      day: 'numeric', // e.g., "27"
+    });
   };
-
+  
   const formatTime = (time = "") => {
     return new Date(`1970-01-01T${time}`).toLocaleTimeString([], {
       hour: '2-digit',
@@ -417,26 +544,11 @@ const TaskBox = () => {
 
       {/* Task Cards */}
       <div className={styles.taskCard}>
-        {tasks.map((task) => (
-          <div
-            key={task.id}
-            className={`${styles.taskItem} ${task.completed ? styles.completed : ""}`}
-            style={{ borderColor: task.color }}
-            onClick={isAuthenticated ? () => handleTaskClick(task) : undefined}
-          >
+        {tasks.map((task, index) => (
+          <div key={task.id || index} className={styles.taskItem} style={{ borderColor: task.color }} 
+            onClick={() => isAuthenticated ? handleTaskClick(task) : undefined}>
             {task.image && <img src={task.image} alt="Task" className={styles.taskImage} />}
-            <div className={styles.titleContainer}>
-              <h3>{task.title}</h3>
-              <label className={styles.checkboxContainer}>
-                <input
-                  type="checkbox"
-                  checked={task.completed}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={() => toggleCompleted(task.id)}
-                  disabled={!isAuthenticated}
-                />
-              </label>
-            </div>
+            <h3>{task.title}</h3>
             <p>Date: {formatDate(task.date)}</p>
             <p>Start: {formatTime(task.start)}</p>
             <p>End: {formatTime(task.end)}</p>
